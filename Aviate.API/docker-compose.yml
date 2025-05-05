@@ -1,0 +1,72 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: aviate
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "54321"
+      POSTGRES_DB: Aviate
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data_new:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: aviate_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5054:80"
+    depends_on:
+      - postgres
+
+  api:
+    build:
+      context: ..
+      dockerfile: Aviate.API/Dockerfile
+    container_name: aviate_api
+    ports:
+      - "5004:5004"
+    depends_on:
+      - postgres
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=Aviate;Username=postgres;Password=54321
+    restart: always
+
+  minio:
+    image: minio/minio
+    container_name: aviate_minio
+    ports:
+      - "9000:9000"  # S3 API
+      - "9001:9001"  # MinIO Console
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: secret123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    restart: always
+
+  # frontend:
+  #   build:
+  #     context: ../Aviate.Frontend\aviate
+  #     dockerfile: Dockerfile
+  #   container_name: aviate_frontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - api
+  #   environment:
+  #     - NEXT_PUBLIC_API_URL=http://api:5004
+  #   restart: always
+
+volumes:
+  postgres_data_new:
+  minio_data:

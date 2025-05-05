@@ -1,0 +1,6 @@
+@Aviate.API_HostAddress = http://localhost:5028
+
+GET {{Aviate.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

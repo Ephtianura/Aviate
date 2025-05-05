@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>b46990b9-8b99-4d71-9bf2-06af44100a1e</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aviate.Application\Aviate.Application.csproj" />
+    <ProjectReference Include="..\Aviate.Core\Aviate.Core.csproj" />
+    <ProjectReference Include="..\Aviate.DataAccess\Aviate.DataAccess.csproj" />
+    <ProjectReference Include="..\Aviate.Infrastructure\Aviate.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
