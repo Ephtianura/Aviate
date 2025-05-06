@@ -1,15 +1,41 @@
+using Aviate.Core.Contracts;
+using Aviate.DataAccess;
+using Aviate.DataAccess.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// FluentValidation
+builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
+
+//InitialDB
+var configuration = builder.Configuration;
+
+builder.Services.AddDbContext<AviateDbContext>(
+    options =>
+    {
+        options.UseNpgsql(configuration.GetConnectionString(nameof(AviateDbContext)));
+    });
+
+//DI Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+
+
+
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -18,6 +44,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

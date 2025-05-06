@@ -1,13 +1,13 @@
-﻿//using Aviate.Application.Contracts;
+﻿using Aviate.Application.Contracts;
 
-//namespace AutoRentalSystem.Infrastructure.Auth
-//{
-//    public class PasswordHasher : IPasswordHasher
-//    {
-//        public string Generate(string password) =>
-//            BCrypt.Net.BCrypt.EnhancedHashPassword(password);
+namespace AutoRentalSystem.Infrastructure.Auth
+{
+    public class PasswordHasher : IPasswordHasher
+    {
+        public string Generate(string password) =>
+            BCrypt.Net.BCrypt.EnhancedHashPassword(password);
 
-//        public bool Verify(string password, string hashedPassword) =>
-//        BCrypt.Net.BCrypt.EnhancedVerify(password, hashedPassword);
-//    }
-//}
+        public bool Verify(string password, string hashedPassword) =>
+        BCrypt.Net.BCrypt.EnhancedVerify(password, hashedPassword);
+    }
+}

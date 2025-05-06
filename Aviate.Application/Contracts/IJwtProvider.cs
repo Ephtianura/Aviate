@@ -1,9 +1,9 @@
-﻿//using Aviate.Core.Models;
+﻿using Aviate.Core.Models;
 
-//namespace Aviate.Infrastructure.Auth
-//{
-//    public interface IJwtProvider
-//    {
-//        string GenerateToken(User user);
-//    }
-//}
+namespace Aviate.Application.Contracts
+{
+    public interface IJwtProvider
+    {
+        string GenerateToken(User user);
+    }
+}

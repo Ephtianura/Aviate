@@ -3,14 +3,14 @@ version: "3.9"
 services:
   postgres:
     image: postgres:16
-    container_name: aviate
+    container_name: aviate_postgres
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "54321"
       POSTGRES_DB: Aviate
     ports:
-      - "5434:5432"
+      - "5435:5432"
     volumes:
       - postgres_data_new:/var/lib/postgresql/data
 

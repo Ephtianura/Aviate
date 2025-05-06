@@ -1,81 +1,86 @@
-﻿//using Aviate.Core.Contracts;
-//using Aviate.Core.Models;
-//using Aviate.Core.Models.Common;
-//using Aviate.Core.Models.Filters;
-//using Microsoft.EntityFrameworkCore;
+﻿using Aviate.Core.Contracts;
+using Aviate.Core.Filters;
+using Aviate.Core.Models;
+using Microsoft.EntityFrameworkCore;
 
-//namespace Aviate.DataAccess.Repositories
-//{
-//    public class UserRepository : IUserRepository
-//    {
-//        private readonly AutoRentalDbContext _db;
+namespace Aviate.DataAccess.Repositories
+{
+    public class UserRepository : IUserRepository
+    {
+        private readonly AviateDbContext _dbContext;
 
-//        public UserRepository(AutoRentalDbContext db) => _db = db;
+        public UserRepository(AviateDbContext db) => _dbContext = db;
 
-//        public async Task<User?> GetByIdAsync(int id) =>
-//            await _db.Users.FindAsync(id);
+        public async Task<User?> GetByIdAsync(Guid id) =>
+            await _dbContext.Users.FindAsync(id);
 
-//        public async Task<User?> GetByEmailAsync(string email)
-//        {
-//            var normalizedEmail = email.ToLower();
-//            return await _db.Users
-//                .AsNoTracking()
-//                .FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail);
-//        }
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            return await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.Email == email.ToLower());
+        }
 
+        public async Task<PagedResult<User>> GetFilteredAsync(UserFilter filter)
+        {
+            var query = _dbContext.Users.AsQueryable();
 
+            // 🔍 Пошук по імені або пошті
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                var term = filter.Search.Trim().ToLower();
+                query = query.Where(u =>
+                    u.FullName.ToLower().Contains(term) ||
+                    u.Email.ToLower().Contains(term));
+            }
 
-//        public async Task<PagedResult<User>> GetFilteredAsync(UserFilter filter, PagedRequest request)
-//        {
-//            IQueryable<User> query = _db.Users;
+            // 🎭 Фільтр по ролі
+            if (filter.Role.HasValue)
+                query = query.Where(u => u.Role == filter.Role);
 
-//            if (!string.IsNullOrWhiteSpace(filter.UserName))
-//                query = query.Where(u => u.UserName.Contains(filter.UserName));
-//            if (!string.IsNullOrWhiteSpace(filter.Email))
-//                query = query.Where(u => u.Email.Contains(filter.Email));
-//            if (filter.Status.HasValue)
-//                query = query.Where(u => u.Status == filter.Status.Value);
-//            if (filter.Role.HasValue)
-//                query = query.Where(u => u.Role == filter.Role.Value);
-//            if (filter.RegisteredFrom.HasValue)
-//                query = query.Where(u => u.RegistrationDate >= filter.RegisteredFrom.Value);
-//            if (filter.RegisteredTo.HasValue)
-//                query = query.Where(u => u.RegistrationDate <= filter.RegisteredTo.Value);
+            // 📅 Діапазон по датам реєстрації
+            if (filter.RegisteredFrom.HasValue)
+                query = query.Where(u => u.RegistrationDate >= filter.RegisteredFrom);
+            if (filter.RegisteredTo.HasValue)
+                query = query.Where(u => u.RegistrationDate <= filter.RegisteredTo);
 
-//            return await query.PaginateAsync(request);
-//        }
+            // 🔽 Сортування
+            query = filter.SortBy?.ToLower() switch
+            {
+                "fullname" => filter.SortDesc ? query.OrderByDescending(u => u.FullName)
+                                              : query.OrderBy(u => u.FullName),
+                "email" => filter.SortDesc ? query.OrderByDescending(u => u.Email)
+                                           : query.OrderBy(u => u.Email),
+                "registrationdate" => filter.SortDesc ? query.OrderByDescending(u => u.RegistrationDate)
+                                                      : query.OrderBy(u => u.RegistrationDate),
+                _ => query.OrderBy(u => u.FullName) // За замовчуванням
+            };
 
-//        public async Task AddAsync(User user)
-//        {
+            // 📄 Пагінація
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync();
 
-//            await _db.Users.AddAsync(user);
-//            await _db.SaveChangesAsync();
-//        }
+            return new PagedResult<User>(items, totalCount, filter.Page, filter.PageSize);
+        }
 
-//        public async Task UpdateAsync(User user)
-//        {
-//            _db.Users.Update(user);
-//            await _db.SaveChangesAsync();
-//        }
+        public async Task AddAsync(User user)
+        {
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
+        }
 
-//        public async Task BlockUserAsync(int id)
-//        {
-//            var user = await _db.Users.FindAsync(id);
-//            if (user != null)
-//            {
-//                user.Block();
-//                await _db.SaveChangesAsync();
-//            }
-//        }
+        public async Task UpdateAsync(User user)
+        {
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
+        }
+        public async Task DeleteAsync(User user)
+        {
+            _dbContext.Users.Remove(user);
+            await _dbContext.SaveChangesAsync();
 
-//        public async Task UnblockUserAsync(int id)
-//        {
-//            var user = await _db.Users.FindAsync(id);
-//            if (user != null)
-//            {
-//                user.Unblock();
-//                await _db.SaveChangesAsync();
-//            }
-//        }
-//    }
-//}
+        }
+    }
+}

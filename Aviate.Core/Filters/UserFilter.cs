@@ -1,0 +1,22 @@
+﻿using Aviate.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Aviate.Core.Filters
+{
+    public class UserFilter
+    {
+        public string? Search { get; set; }       // Пошук по імені та пошті
+        public UserRole? Role { get; set; }       // Фільтр по ролі
+        public DateTimeOffset? RegisteredFrom { get; set; }
+        public DateTimeOffset? RegisteredTo { get; set; }
+        public string? SortBy { get; set; }       // Сортування за - "FullName", "Email", "RegistrationDate"
+        public bool SortDesc { get; set; }
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 20;
+    }
+
+}
