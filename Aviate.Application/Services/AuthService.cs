@@ -13,26 +13,35 @@ namespace Aviate.Application.Services
         private readonly IUserRepository _users;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IJwtProvider _jwtProvider;
-        private readonly IValidator<UserCreateDto> _createValidator;
+        private readonly IValidator<RegisterUserRequest> _registerValidator;
+        private readonly IValidator<LoginUserRequest> _loginValidator;
 
-        public AuthService(IUserRepository users, IPasswordHasher passwordHasher, IJwtProvider jwtProvider, IValidator<UserCreateDto> createValidator)
+        public AuthService
+            (
+            IUserRepository users, 
+            IPasswordHasher passwordHasher, 
+            IJwtProvider jwtProvider, 
+            IValidator<RegisterUserRequest> registerValidator,
+            IValidator<LoginUserRequest> loginValidator
+            )
         {
             _users = users;
             _passwordHasher = passwordHasher;
             _jwtProvider = jwtProvider;
-            _createValidator = createValidator;
+            _registerValidator = registerValidator;
+            _loginValidator = loginValidator;
         }
 
         // Реєстрація
-        public async Task RegisterAsync(UserCreateDto dto)
+        public async Task RegisterAsync(RegisterUserRequest request)
         {
             // Валідація
-            var validationResult = await _createValidator.ValidateAsync(dto);
+            var validationResult = await _registerValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
 
             // Нормалізація ел. адреси
-            var emailNormalized = dto.Email.Trim().ToLower();
+            var emailNormalized = NormalizeEmail(request.Email);
 
             // Отримання ел. адреси 
             var existingByEmail = await _users.GetByEmailAsync(emailNormalized);
@@ -40,26 +49,31 @@ namespace Aviate.Application.Services
                 throw new EmailAlreadyExistsException(emailNormalized);
 
             // Генерація хеша
-            var hashedPassword = _passwordHasher.Generate(dto.Password);
+            var hashedPassword = _passwordHasher.Generate(request.Password);
 
             // Створення користувача в БД            
-            var user = User.Create(dto.FullName, emailNormalized, hashedPassword);
+            var user = User.Create(request.FullName, emailNormalized, hashedPassword);
 
             // Збереження
             await _users.AddAsync(user);
         }
 
         // Вхід
-        public async Task<string> Login(string email, string password)
+        public async Task<string> Login(LoginUserRequest request)
         {
+            // Валідація
+            var validationResult = await _loginValidator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
             // Нормалізація ел. адреси
-            var emailNormalized = email.Trim().ToLower();
+            var emailNormalized = NormalizeEmail(request.Email);
 
             // Отримання ел. адреси 
             var user = await _users.GetByEmailAsync(emailNormalized);
 
             // Перевірка логіна і пароля 
-            if (user == null || !_passwordHasher.Verify(password, user.PasswordHash))
+            if (user == null || !_passwordHasher.Verify(request.Password, user.PasswordHash))
                 throw new AuthenticationException();
 
             // Генерація JWT

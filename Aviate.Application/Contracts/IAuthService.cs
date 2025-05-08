@@ -4,7 +4,7 @@ namespace Aviate.Application.Contracts
 {
     public interface IAuthService
     {
-        Task<string> Login(string email, string password);
-        Task RegisterAsync(UserCreateDto dto);
+        Task<string> Login(LoginUserRequest request);
+        Task RegisterAsync(RegisterUserRequest request);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Aviate.Application.Contracts;
 
-namespace AutoRentalSystem.Infrastructure.Auth
+namespace Aviate.Infrastructure.Auth
 {
     public class PasswordHasher : IPasswordHasher
     {

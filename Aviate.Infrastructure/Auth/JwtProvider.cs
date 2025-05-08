@@ -7,7 +7,7 @@ using System.Security.Claims;
 using Aviate.Infrastructure.Auth;
 using Aviate.Application.Contracts;
 
-namespace AutoRentalSystem.Infrastructure.Auth
+namespace Aviate.Infrastructure.Auth
 { 
     public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
     {

@@ -3,10 +3,10 @@ using FluentValidation;
 
 namespace Aviate.Application.Validation
 {
-    public class UserCreateValidator : AbstractValidator<UserCreateDto>
+    public class UserRegisterValidator : AbstractValidator<RegisterUserRequest>
 
     {
-        public UserCreateValidator()
+        public UserRegisterValidator()
         {
             RuleFor(u => u.FullName)
                 .NotEmpty().WithMessage("Full name is required")
