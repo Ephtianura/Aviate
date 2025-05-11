@@ -1,0 +1,13 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Aviate.API.Dto
+{
+    public record GetUserResponse(
+      Guid Id,
+      string FullName,
+      string Email,
+      string? Phone
+      //DateTimeOffset RegistrationDate,
+      //DateTimeOffset UpdatedDate
+  );
+}

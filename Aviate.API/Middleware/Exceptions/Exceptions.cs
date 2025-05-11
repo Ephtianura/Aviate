@@ -1,15 +1,18 @@
-﻿//using System.Net;
+﻿namespace Aviate.Application.Exceptions
+{
+    
+    // Коли з токена не вдалося витягти userId (відсутня claim)    
+    public class MissingUserIdClaimException : UnauthorizedAccessException
+    {
+        public MissingUserIdClaimException()
+            : base("Unable to determine user (no userId in token).") { }
+    }
 
-//namespace Aviate.API.Middleware.Exceptions
-//{
-//    public class EmailAlreadyExistsException : AppException
-//    {
-//        public EmailAlreadyExistsException(string email)
-//            : base($"User with email '{email}' already exists.", HttpStatusCode.BadRequest) { }
-//    }
-//    public class AuthenticationException : AppException
-//    {
-//        public AuthenticationException()
-//            : base("Invalid email or password.", HttpStatusCode.BadRequest) { }
-//    }
-//}
+    
+    // Коли userId у токені має невірний формат (не Guid)    
+    public class InvalidUserIdFormatException : ArgumentException
+    {
+        public InvalidUserIdFormatException()
+            : base("Invalid user ID format.") { }
+    }
+}

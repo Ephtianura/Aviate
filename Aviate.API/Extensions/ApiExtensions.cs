@@ -48,11 +48,13 @@ namespace Aviate.API.Extensions
                 options.AddPolicy("AdminPolicy", policy =>
                     policy.RequireRole("Admin"));
 
-                options.AddPolicy("UserPolicy", policy =>
-                    policy.RequireRole("User", "Admin"));
-
                 options.AddPolicy("EmployeePolicy", policy =>
+                    policy.RequireRole("Employee", "Admin"));
+
+                options.AddPolicy("UserPolicy", policy =>
                     policy.RequireRole("User", "Employee", "Admin"));
+
+                
             });
 
         }

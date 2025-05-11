@@ -7,9 +7,11 @@ namespace Aviate.Application.Contracts
 {
     public interface IUserService
     {
-        Task DeleteAsync(Guid id);
         Task<User> GetByIdAsync(Guid id);
         Task<PagedResult<User>> GetFilteredAsync(UserFilter filter);
         Task UpdateProfileAsync(Guid id, UserUpdateDto dto);
+        Task UserUpdateByAdminAsync(Guid id, UserUpdateAdminDto dto);
+        Task DeleteAsync(Guid id);
+
     }
 }

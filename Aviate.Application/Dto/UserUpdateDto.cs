@@ -1,6 +1,4 @@
-﻿using Aviate.Core.Models;
-
-namespace Aviate.Application.Dto
+﻿namespace Aviate.Application.Dto
 {
     public class UserUpdateDto
     {

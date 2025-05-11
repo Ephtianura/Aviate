@@ -75,6 +75,12 @@ namespace Aviate.Core.Models
             Touch();
         }
 
+        public void ChangeRole(UserRole newRole)
+        {
+            Role = newRole;
+            Touch();
+        }
+
         private void Touch() => UpdatedDate = DateTimeOffset.UtcNow;
     }
 

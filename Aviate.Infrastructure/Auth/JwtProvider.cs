@@ -30,7 +30,7 @@ namespace Aviate.Infrastructure.Auth
             var token = new JwtSecurityToken(
                 claims: claims,
                 signingCredentials: signingCredentials,
-                expires: DateTime.UtcNow.AddHours(_options.ExpitesHours)
+                expires: DateTime.UtcNow.AddHours(_options.ExpiresHours)
                 );
 
             var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);

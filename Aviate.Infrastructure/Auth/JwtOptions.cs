@@ -3,6 +3,6 @@
     public class JwtOptions
     {
         public string Secretkey { get; set; } = string.Empty;
-        public int ExpitesHours { get; set; }
+        public int ExpiresHours { get; set; }
     }
 }

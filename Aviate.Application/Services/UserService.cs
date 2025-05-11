@@ -13,17 +13,20 @@ namespace Aviate.Application.Services
         private readonly IUserRepository _users;
         private readonly IValidator<UserUpdateDto> _updateValidator;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IValidator<UserUpdateAdminDto> _adminUpdateValidator;
 
         public UserService
         (
             IUserRepository users,
+            IPasswordHasher passwordHasher,
             IValidator<UserUpdateDto> updateValidator,
-            IPasswordHasher passwordHasher
+            IValidator<UserUpdateAdminDto> adminUpdateValidator
         )
         {
             _users = users;
-            _updateValidator = updateValidator;
             _passwordHasher = passwordHasher;
+            _updateValidator = updateValidator;
+            _adminUpdateValidator = adminUpdateValidator;
         }
 
         // Отримати користувача по ID
@@ -35,16 +38,18 @@ namespace Aviate.Application.Services
             return user;
         }
         // Отримати користувачів за філтрами
-        public async Task<PagedResult<User>> GetFilteredAsync(UserFilter filter) =>
-            await _users.GetFilteredAsync(filter);
-
-
+        public async Task<PagedResult<User>> GetFilteredAsync(UserFilter filter)
+        {            
+            var users = await _users.GetFilteredAsync(filter);
+            if (users == null)
+                throw new KeyNotFoundException($"Users not found.");
+            return users;
+        }
 
         // Оновити профіль користувача
         public async Task UpdateProfileAsync(Guid id, UserUpdateDto dto)
         {
             var user = await GetByIdAsync(id);
-
 
             var validationResult = await _updateValidator.ValidateAsync(dto);
             if (!validationResult.IsValid)
@@ -71,7 +76,34 @@ namespace Aviate.Application.Services
             await _users.UpdateAsync(user);
         }
 
+        public async Task UserUpdateByAdminAsync(Guid id, UserUpdateAdminDto dto)
+        {
+            var user = await GetByIdAsync(id);
 
+            var validationResult = await _adminUpdateValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
+            if (!string.IsNullOrEmpty(dto.FullName) && dto.FullName != user.FullName)
+                user.ChangeFullName(dto.FullName);
+
+            if (!string.IsNullOrEmpty(dto.Email) && dto.Email != user.Email)
+            {
+                var existing = await _users.GetByEmailAsync(dto.Email.Trim().ToLower());
+                if (existing != null && existing.Id != id)
+                    throw new EmailAlreadyExistsException(dto.Email);
+
+                user.ChangeEmail(dto.Email.Trim().ToLower());
+            }
+
+            if (!string.IsNullOrEmpty(dto.Phone) && dto.Phone != user.Phone)
+                user.ChangePhone(dto.Phone);
+
+            if (dto.Role.HasValue && dto.Role != user.Role)
+                user.ChangeRole(dto.Role.Value);
+
+            await _users.UpdateAsync(user);
+        }
 
 
         // Видалити користувача
@@ -83,8 +115,5 @@ namespace Aviate.Application.Services
 
             await _users.DeleteAsync(user);
         }
-
-        private string NormalizeEmail(string email) => email.Trim().ToLower();
-
     }
 }

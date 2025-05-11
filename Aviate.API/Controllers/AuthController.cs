@@ -1,4 +1,6 @@
-﻿using Aviate.Application.Contracts;
+﻿using Aviate.API.Dto;
+using Aviate.API.Extensions;
+using Aviate.Application.Contracts;
 using Aviate.Application.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +34,7 @@ namespace Aviate.API.Controllers
             });
 
             SetAuthCookie(token);
-            return Ok(new { message = "User registered and logged in successfully" });
+            return Ok(new ApiResponse("User registered and logged in successfully"));
         }
 
         /// <summary>Вхід користувача</summary>
@@ -41,7 +43,7 @@ namespace Aviate.API.Controllers
         {
             var token = await _authService.Login(request);
             SetAuthCookie(token);
-            return Ok(new { message = "Logged in" });
+            return Ok(new ApiResponse("Logged in"));
         }
 
         /// <summary>Вихід користувача</summary>
@@ -54,19 +56,30 @@ namespace Aviate.API.Controllers
                 HttpContext.Response.Cookies.Delete("cookies");
             }
 
-            return Ok(new { message = "Logged out" });
-        }        
+            return Ok(new ApiResponse("Logged out"));
+
+        }
 
         /// <summary>Тест для адміна</summary>
         [Authorize(Policy = "AdminPolicy")]
-        [HttpGet("Get")]
-        public IActionResult Get()
+        [HttpGet("TestAdmin")]
+        public IActionResult TestAdmin()
         {
              return Ok("Admin endpoint works");
         }
+
+        /// <summary>Тест для робітника</summary>
+        [Authorize(Policy = "EmployeePolicy")]
+        [HttpGet("TestEmployee")]
+        public IActionResult TestEmployee()
+        {
+            return Ok("Employee endpoint works");
+        }
+
         private void SetAuthCookie(string token)
         {
             HttpContext.Response.Cookies.Append("cookies", token);
         }
+
     }
 }
