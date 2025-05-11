@@ -1,4 +1,5 @@
-﻿using System.Net.Mail;
+﻿using Aviate.Core.Enums;
+using System.Net.Mail;
 
 namespace Aviate.Core.Models
 {
@@ -11,8 +12,8 @@ namespace Aviate.Core.Models
             FullName = fullName.Trim();
             Email = email;
             PasswordHash = passwordHash;
-            RegistrationDate = DateTime.UtcNow;
-            UpdatedDate = DateTime.UtcNow;
+            RegistrationDate = DateTimeOffset.UtcNow;
+            UpdatedDate = DateTimeOffset.UtcNow;
         }
         public Guid Id { get; private set; }
         public string FullName { get; private set; }
@@ -52,13 +53,11 @@ namespace Aviate.Core.Models
             FullName = fullName.Trim();
             Touch();
         }
-
         public void ChangeEmail(string newEmail)
         {
             Email = newEmail;
             Touch();
         }
-
         public void ChangePassword(string newPasswordHash)
         {
             if (string.IsNullOrWhiteSpace(newPasswordHash))
@@ -66,7 +65,6 @@ namespace Aviate.Core.Models
             PasswordHash = newPasswordHash;
             Touch();
         }
-
         public void ChangePhone(string? newPhone)
         {
             if (newPhone != null && string.IsNullOrWhiteSpace(newPhone))
@@ -74,29 +72,16 @@ namespace Aviate.Core.Models
             Phone = newPhone;
             Touch();
         }
-
         public void ChangeRole(UserRole newRole)
         {
+            if (!Enum.IsDefined(typeof(UserRole), newRole))
+                throw new ArgumentException("Invalid user role");
             Role = newRole;
             Touch();
         }
 
         private void Touch() => UpdatedDate = DateTimeOffset.UtcNow;
-    }
 
-    // 🔐 Ролі користувачів
-    public enum UserRole
-    {
-        User = 0,
-        Employee = 1,
-        Admin = 2,
-    }
-
-    // ================= AIRPORT =================
-    public class Airport
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-
+        public override string ToString() => $"{FullName} ({Email}) | Role: {Role}";
     }
 }

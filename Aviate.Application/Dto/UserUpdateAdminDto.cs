@@ -1,4 +1,4 @@
-﻿using Aviate.Core.Models;
+﻿using Aviate.Core.Enums;
 
 namespace Aviate.Application.Dto
 {
