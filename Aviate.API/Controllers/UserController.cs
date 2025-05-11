@@ -6,8 +6,6 @@ using Aviate.Application.Exceptions;
 using Aviate.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.CodeDom;
-using System.Security.Claims;
 
 namespace Aviate.API.Controllers
 {
@@ -30,31 +28,42 @@ namespace Aviate.API.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> GetMe()
         {
-            // Виймаємо userId з токена
-            var userIdClaim = User.FindFirst("userId")?.Value;
-
-            if (string.IsNullOrEmpty(userIdClaim))
-                throw new MissingUserIdClaimException();
-            if (!Guid.TryParse(userIdClaim, out Guid userId))
-                throw new InvalidUserIdFormatException();
-
+            var userId = GetUserId();
             var user = await _userService.GetByIdAsync(userId);
+
             //Перевірка на адміна
             if (User.IsInRole("Admin"))
             {
                 var responseAdmin = _mapper.Map<GetUserAdminResponse>(user);
                 return Ok(responseAdmin);
             }
+
             var response = _mapper.Map<GetUserResponse>(user);
             return Ok(response);
         }
 
+        [Authorize(Policy = "UserPolicy")]
         /// <summary>Оновити профіль</summary>
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UserUpdateDto dto)
+        [HttpPut("UpdateProfile")]
+        public async Task<IActionResult> Update([FromBody] UserUpdateDto dto)
         {
-            await _userService.UpdateProfileAsync(id, dto);
+            var userId = GetUserId();
+            await _userService.UpdateProfileAsync(userId, dto);
             return NoContent();
+        }
+
+        // Достати userId з токену
+        private Guid GetUserId()
+        {
+            // Виймаємо userId з токена
+            var userIdClaim = User.FindFirst("userId")?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim))
+                throw new MissingUserIdClaimException();
+            if (!Guid.TryParse(userIdClaim, out Guid userId))
+                throw new InvalidUserIdFormatException();           
+
+            return userId;
         }
     }
 }
