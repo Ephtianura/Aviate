@@ -9,6 +9,7 @@ namespace Aviate.DataAccess.Repositories
         Task AddAsync(Airport airport);
         Task DeleteAsync(Airport airport);
         Task<Airport?> GetByIdAsync(Guid id);
+        Task<Airport?> GetByCode(string code);
         Task<PagedResult<Airport>> GetFilteredAsync(AirportFilter filter);
         Task UpdateAsync(Airport airport);
     }

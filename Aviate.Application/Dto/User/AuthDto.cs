@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Aviate.Application.Dto
+namespace Aviate.Application.Dto.User
 {
     public record RegisterUserRequest(
             [Required] string FullName,

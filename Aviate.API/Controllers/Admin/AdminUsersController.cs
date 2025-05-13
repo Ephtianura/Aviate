@@ -2,7 +2,7 @@
 using Aviate.API.Dto;
 using Aviate.API.Dto.User;
 using Aviate.Application.Contracts;
-using Aviate.Application.Dto;
+using Aviate.Application.Dto.User;
 using Aviate.Core.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

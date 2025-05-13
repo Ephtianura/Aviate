@@ -1,4 +1,4 @@
-﻿using Aviate.Application.Dto;
+﻿using Aviate.Application.Dto.User;
 
 namespace Aviate.Application.Contracts
 {

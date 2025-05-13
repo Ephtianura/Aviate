@@ -1,7 +1,6 @@
 ﻿using Aviate.Core.Enums;
-using System.ComponentModel.DataAnnotations;
 
-namespace Aviate.Application.Dto
+namespace Aviate.Application.Dto.Airplane
 {
     public record AirplaneRequest(
         string Model,

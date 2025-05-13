@@ -1,5 +1,5 @@
 ﻿using Aviate.Application.Contracts;
-using Aviate.Application.Dto;
+using Aviate.Application.Dto.Airplane;
 using Aviate.Application.Exceptions;
 using Aviate.Core.Contracts;
 using Aviate.Core.Filters;
@@ -17,11 +17,13 @@ namespace Aviate.Application.Services
         private readonly IValidator<AirplaneFilter> _filterValidator;
 
 
-        public AirplaneService(
+        public AirplaneService
+            (
             IAirplaneRepository airplanes,
             IValidator<AirplaneRequest> createValidator,
-            IValidator<AirplaneFilter> filterValidator,
-            IValidator<AirplaneUpdateDto> updateValidator)
+            IValidator<AirplaneUpdateDto> updateValidator,
+            IValidator<AirplaneFilter> filterValidator
+            )
         {
             _airplanes = airplanes;
             _createValidator = createValidator;
@@ -33,33 +35,24 @@ namespace Aviate.Application.Services
         // Отримати літак по ID
         public async Task<Airplane> GetByIdAsync(Guid id)
         {
-            var airplane = await _airplanes.GetByIdAsync(id);
-            if (airplane == null)
-                throw new EntityNotFoundException("Airplanes", id);
-            return airplane;
+            return await GetAirplaneByIdAsync(id); ;
         }
 
         // Отримати літаки за фільтром
         public async Task<PagedResult<Airplane>> GetFilteredAsync(AirplaneFilter filter)
         {
             // Валідація фільтра
-            var validationResult = await _filterValidator.ValidateAsync(filter);
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors);
+            await _filterValidator.ValidateAndThrowAsync(filter);
 
-            var airplanes = await _airplanes.GetFilteredAsync(filter);
-            if (airplanes == null)
-                throw new EntityNotFoundException("Airplanes");
-            return airplanes;
+
+            return await _airplanes.GetFilteredAsync(filter);
         }
 
         // Створити літак
         public async Task<Airplane> CreateAsync(AirplaneRequest request)
         {
             // Валідація запиту
-            var validationResult = await _createValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors);
+            await _createValidator.ValidateAndThrowAsync(request);
 
             // Перевірка чи нема такого самого літака
             var existing = await _airplanes.GetByRegistrationAsync(request.RegistrationNumber.Trim().ToUpperInvariant());
@@ -86,14 +79,13 @@ namespace Aviate.Application.Services
         public async Task UpdateAsync(Guid id, AirplaneUpdateDto request)
         {
             // Отримати літак
-            var airplane = await GetByIdAsync(id);
+            var airplane = await GetAirplaneByIdAsync(id);
 
             // Валідація запиту
-            var validationResult = await _updateValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors);
+            await _updateValidator.ValidateAndThrowAsync(request);
 
             // Якщо передали значення - встановлюємо
+            // Перевірка чи нема такого самого літака
             if (!string.IsNullOrEmpty(request.RegistrationNumber) && request.RegistrationNumber != airplane.RegistrationNumber)
             {
                 var existing = await _airplanes.GetByRegistrationAsync(request.RegistrationNumber.Trim().ToUpperInvariant());
@@ -101,18 +93,14 @@ namespace Aviate.Application.Services
                     throw new EntityAlreadyExistsException("Airplane", request.RegistrationNumber);
 
                 airplane.ChangeRegistrationNumber(request.RegistrationNumber.Trim().ToUpperInvariant());
-            }
-            
+            }            
 
             if (!string.IsNullOrEmpty(request.Model) && request.Model != airplane.Model)
                 airplane.ChangeModel(request.Model);
-
             if (request.Capacity.HasValue && request.Capacity.Value != airplane.Capacity)
                 airplane.ChangeCapacity(request.Capacity.Value);
-
             if (request.Status.HasValue && request.Status.Value != airplane.Status)
                 airplane.ChangeStatus(request.Status.Value);
-
             if (request.ManufactureDate.HasValue && request.ManufactureDate.Value != airplane.ManufactureDate)
                 airplane.ChangeManufactureDate(request.ManufactureDate.Value);
 
@@ -122,8 +110,16 @@ namespace Aviate.Application.Services
         // Видалити літак
         public async Task DeleteAsync(Guid id)
         {
-            var airplane = await GetByIdAsync(id);
+            var airplane = await GetAirplaneByIdAsync(id);
             await _airplanes.DeleteAsync(airplane);
+        }
+
+        private async Task<Airplane> GetAirplaneByIdAsync(Guid id)
+        {
+            var airplane = await _airplanes.GetByIdAsync(id);
+            if (airplane == null)
+                throw new EntityNotFoundException("Airplane", id);
+            return airplane;
         }
     }
 }

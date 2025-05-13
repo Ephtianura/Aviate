@@ -1,10 +1,7 @@
 ﻿using Aviate.Core.Filters;
-using Aviate.Core.Enums;
 using FluentValidation;
-using System;
-using System.Linq;
 
-namespace Aviate.Application.Validation
+namespace Aviate.Application.Validation.AirplaneValidator
 {
     public class AirplaneFilterValidator : AbstractValidator<AirplaneFilter>
     {

@@ -1,75 +1,109 @@
-﻿//using Aviate.Application.Contracts;
-//using Aviate.Application.Dto;
-//using Aviate.Application.Exceptions;
-//using Aviate.Core.Contracts;
-//using Aviate.Core.Filters;
-//using Aviate.Core.Models;
-//using Aviate.DataAccess.Repositories;
-//using FluentValidation;
+﻿using Aviate.Application.Contracts;
+using Aviate.Application.Dto.Airport;
+using Aviate.Application.Exceptions;
+using Aviate.Core.Contracts;
+using Aviate.Core.Filters;
+using Aviate.Core.Models;
+using Aviate.DataAccess.Repositories;
+using FluentValidation;
 
-//namespace Aviate.Application.Services
-//{
-//    public class AirportService 
-//    {
-//        private readonly IAirportRepository _airports;
-//        private readonly IValidator<AirportUpdateDto> _updateValidator;
+namespace Aviate.Application.Services
+{
+    public class AirportService : IAirportService
+    {
+        private readonly IAirportRepository _airports;
+        private readonly IValidator<AirportCreateDto> _createValidator;
+        private readonly IValidator<AirportUpdateDto> _updateValidator;
+        private readonly IValidator<AirportFilter> _filterValidator;
 
-//        public AirportService(
-//            IAirportRepository airports,
-//            IValidator<AirportUpdateDto> updateValidator
-//        )
-//        {
-//            _airports = airports;
-//            _updateValidator = updateValidator;
-//        }
+        public AirportService
+            (
+            IAirportRepository airports,
+            IValidator<AirportCreateDto> createValidator,
+            IValidator<AirportUpdateDto> updateValidator,
+            IValidator<AirportFilter> filterValidator
+            )
+        {
+            _airports = airports;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
+            _filterValidator = filterValidator;
 
-//        // Отримати аеропорт по ID
-//        public async Task<Airport> GetByIdAsync(Guid id)
-//        {
-//            var airport = await _airports.GetByIdAsync(id);
-//            if (airport == null)
-//                throw new KeyNotFoundException($"Airport with id {id} not found.");
-//            return airport;
-//        }
+        }
 
-//        // Отримати аеропорти за фільтром
-//        public async Task<PagedResult<Airport>> GetFilteredAsync(AirportFilter filter)
-//        {
-//            var airports = await _airports.GetFilteredAsync(filter);
-//            if (airports == null)
-//                throw new KeyNotFoundException("Airports not found.");
-//            return airports;
-//        }
+        // Отримати аеропорт по ID
+        public async Task<Airport> GetByIdAsync(Guid id)
+        {
+            return await GetAirportByIdAsync(id); ;
+        }
 
-//        // Оновити профіль аеропорту
-//        public async Task UpdateProfileAsync(Guid id, AirportUpdateDto dto)
-//        {
-//            var airport = await GetByIdAsync(id);
+        // Отримати аеропорти за фільтром
+        public async Task<PagedResult<Airport>> GetFilteredAsync(AirportFilter filter)
+        {
+            // Валідація фільтра
+            await _filterValidator.ValidateAndThrowAsync(filter);
 
-//            var validationResult = await _updateValidator.ValidateAsync(dto);
-//            if (!validationResult.IsValid)
-//                throw new ValidationException(validationResult.Errors);
+            return await _airports.GetFilteredAsync(filter);
+        }
 
-//            if (!string.IsNullOrEmpty(dto.Name) && dto.Name != airport.Name)
-//                airport.ChangeName(dto.Name);
+        // Створити аеропорт
+        public async Task<Airport> CreateAsync(AirportCreateDto request)
+        {
+            // Валідація запиту
+            await _createValidator.ValidateAndThrowAsync(request);
 
-//            if (!string.IsNullOrEmpty(dto.City) && dto.City != airport.City)
-//                airport.ChangeCity(dto.City);
+            // Перевірка чи нема такого самого аеропорта
+            var existing = await _airports.GetByCode(request.Code.Trim().ToUpperInvariant());
+            if (existing != null)
+                throw new EntityAlreadyExistsException("Airport", request.Code);
 
-//            if (!string.IsNullOrEmpty(dto.Country) && dto.Country != airport.Country)
-//                airport.ChangeCountry(dto.Country);
+            // Створення літака
+            var airport = Airport.Create(
+                request.Name,
+                request.Code,
+                request.Country,
+                request.City                    
+            );
 
-//            await _airports.UpdateAsync(airport);
-//        }
+            await _airports.AddAsync(airport);
+            return airport;
+        }
 
-//        // Видалити аеропорт
-//        public async Task DeleteAsync(Guid id)
-//        {
-//            var airport = await _airports.GetByIdAsync(id);
-//            if (airport == null)
-//                throw new KeyNotFoundException($"Airport with id {id} not found.");
+        // Оновити аеропорт
+        public async Task UpdateAsync(Guid id, AirportUpdateDto request)
+        {
+            // Валідація запиту
+            await _updateValidator.ValidateAndThrowAsync(request);
 
-//            await _airports.DeleteAsync(airport);
-//        }
-//    }
-//}
+            // Отримання аеропорту
+            var airport = await GetAirportByIdAsync(id);
+
+            // Що передано - міняємо
+            if (!string.IsNullOrEmpty(request.Name) && request.Name != airport.Name)
+                airport.ChangeName(request.Name);
+            if (!string.IsNullOrEmpty(request.City) && request.City != airport.City)
+                airport.ChangeCity(request.City);
+            if (!string.IsNullOrEmpty(request.Country) && request.Country != airport.Country)
+                airport.ChangeCountry(request.Country);
+
+            // Оновлюємо
+            await _airports.UpdateAsync(airport);
+        }
+
+        // Видалити аеропорт
+        public async Task DeleteAsync(Guid id)
+        {
+            var airport = await GetAirportByIdAsync(id);
+            await _airports.DeleteAsync(airport);
+        }
+
+        // Отримати аеропорт
+        private async Task<Airport> GetAirportByIdAsync(Guid id)
+        {
+            var airport = await _airports.GetByIdAsync(id);
+            if (airport == null)
+                throw new EntityNotFoundException("Airport", id);
+            return airport;
+        }
+    }
+}

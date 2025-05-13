@@ -1,6 +1,6 @@
 ﻿using Aviate.Core.Enums;
 
-namespace Aviate.Application.Dto
+namespace Aviate.Application.Dto.User
 {
     public class UserUpdateAdminDto
     {

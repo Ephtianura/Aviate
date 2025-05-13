@@ -2,7 +2,7 @@
 using Aviate.API.Dto.Airplane;
 using Aviate.API.Dto.User;
 using Aviate.Application.Contracts;
-using Aviate.Application.Dto;
+using Aviate.Application.Dto.User;
 using Aviate.Application.Exceptions;
 using Aviate.Core.Models;
 using Microsoft.AspNetCore.Authorization;

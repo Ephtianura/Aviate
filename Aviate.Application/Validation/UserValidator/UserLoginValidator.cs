@@ -1,4 +1,4 @@
-﻿using Aviate.Application.Dto;
+﻿using Aviate.Application.Dto.User;
 using FluentValidation;
 
 namespace Aviate.Application.Validation.UserValidator

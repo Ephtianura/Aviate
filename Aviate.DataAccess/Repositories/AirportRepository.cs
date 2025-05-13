@@ -14,6 +14,10 @@ namespace Aviate.DataAccess.Repositories
         public async Task<Airport?> GetByIdAsync(Guid id) =>
             await _dbContext.Airports.FindAsync(id);
 
+        // Пошук по коду
+        public async Task<Airport?> GetByCode(string code) =>
+            await _dbContext.Airports.FirstOrDefaultAsync(a => a.Code == code);
+
         public async Task<PagedResult<Airport>> GetFilteredAsync(AirportFilter filter)
         {
             var query = _dbContext.Airports.AsQueryable();
@@ -31,12 +35,6 @@ namespace Aviate.DataAccess.Repositories
 
             if (!string.IsNullOrWhiteSpace(filter.City))
                 query = query.Where(a => a.City.ToLower() == filter.City.Trim().ToLower());
-
-            if (filter.OpenedFrom.HasValue)
-                query = query.Where(a => a.CreatedAt >= filter.OpenedFrom);
-
-            if (filter.OpenedTo.HasValue)
-                query = query.Where(a => a.CreatedAt <= filter.OpenedTo);
 
             query = filter.SortBy?.ToLower() switch
             {

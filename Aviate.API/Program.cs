@@ -4,6 +4,8 @@ using Aviate.API.Mapping;
 using Aviate.API.Middleware.Exceptions;
 using Aviate.Application.Contracts;
 using Aviate.Application.Services;
+using Aviate.Application.Validation.AirplaneValidator;
+using Aviate.Application.Validation.AirportValidator;
 using Aviate.Application.Validation.UserValidator;
 using Aviate.Core.Contracts;
 using Aviate.DataAccess;
@@ -21,20 +23,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-
 // FluentValidation
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterValidator>();
-builder.Services.AddFluentValidationAutoValidation()           
-    .AddFluentValidationClientsideAdapters();   
-builder.Services.AddValidatorsFromAssemblyContaining<UserFilterValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<AirplaneUpdateValidator>();
-
+builder.Services.AddValidatorsFromAssemblyContaining<AirplaneCreateValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AirportCreateValidator>();
 
 // Auto Mapper
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile<UserProfile>();
     cfg.AddProfile<AirplaneProfile>();
+    cfg.AddProfile<AirportProfile>();
 });
 
 // InitialDB
@@ -49,10 +49,12 @@ builder.Services.AddDbContext<AviateDbContext>(
 // DI Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAirplaneRepository, AirplaneRepository>();
+builder.Services.AddScoped<IAirportRepository, AirportRepository>();
 
 // DI Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAirplaneService, AirplaneService>();
+builder.Services.AddScoped<IAirportService, AirportService>();
 
 // DI Auth
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -82,8 +84,7 @@ app.UseCookiePolicy(new CookiePolicyOptions
     MinimumSameSitePolicy = SameSiteMode.Strict,
     HttpOnly = HttpOnlyPolicy.Always,
     Secure = CookieSecurePolicy.Always,
-}
-);
+});
 
 // Обробник помилок
 app.UseMiddleware<ExceptionMiddleware>();

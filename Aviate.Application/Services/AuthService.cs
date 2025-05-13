@@ -1,5 +1,5 @@
 ﻿using Aviate.Application.Contracts;
-using Aviate.Application.Dto;
+using Aviate.Application.Dto.User;
 using Aviate.Application.Exceptions;
 using Aviate.Core.Contracts;
 using Aviate.Core.Models;
@@ -36,9 +36,7 @@ namespace Aviate.Application.Services
         public async Task RegisterAsync(RegisterUserRequest request)
         {
             // Валідація
-            var validationResult = await _registerValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors);
+            await _registerValidator.ValidateAndThrowAsync(request);          
 
             // Нормалізація ел. адреси
             var emailNormalized = NormalizeEmail(request.Email);
@@ -62,9 +60,7 @@ namespace Aviate.Application.Services
         public async Task<string> Login(LoginUserRequest request)
         {
             // Валідація
-            var validationResult = await _loginValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors);
+            await _loginValidator.ValidateAndThrowAsync(request);            
 
             // Нормалізація ел. адреси
             var emailNormalized = NormalizeEmail(request.Email);

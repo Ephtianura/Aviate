@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations;
 namespace Aviate.Application.Dto
 {
     public record FlightRequest(
-        [Required] string FlightNumber,
-        [Required] Guid AirplaneId,
-        [Required] Guid DepartureAirportId,
-        [Required] Guid ArrivalAirportId,
-        [Required] decimal BasePrice,
-        [Required] DateTimeOffset DepartureTime,
-        [Required] DateTimeOffset ArrivalTime,
+        string FlightNumber,
+        Guid AirplaneId,
+        Guid DepartureAirportId,
+        Guid ArrivalAirportId,
+        decimal BasePrice,
+        DateTimeOffset DepartureTime,
+        DateTimeOffset ArrivalTime,
         int EconomySeats,
         int BusinessSeats,
         int FirstClassSeats,

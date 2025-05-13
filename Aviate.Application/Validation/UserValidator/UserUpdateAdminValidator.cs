@@ -1,4 +1,4 @@
-﻿using Aviate.Application.Dto;
+﻿using Aviate.Application.Dto.User;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
