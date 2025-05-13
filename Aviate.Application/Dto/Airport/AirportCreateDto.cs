@@ -1,5 +1,4 @@
-﻿
-namespace Aviate.Application.Dto.Airport
+﻿namespace Aviate.Application.Dto.Airport
 {
     public record AirportCreateDto(
         string Name,

@@ -44,7 +44,6 @@ namespace Aviate.Application.Services
             // Валідація фільтра
             await _filterValidator.ValidateAndThrowAsync(filter);
 
-
             return await _airplanes.GetFilteredAsync(filter);
         }
 

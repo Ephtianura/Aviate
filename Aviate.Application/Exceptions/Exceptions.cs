@@ -27,8 +27,14 @@ namespace Aviate.Application.Exceptions
         public EntityAlreadyExistsException()
             : base() { }
         public EntityAlreadyExistsException(string message)
-        : base(message) { }
+            : base(message) { }
         public EntityAlreadyExistsException(string entityName, object key)
-        : base($"{entityName} with key '{key}' already exists.") { }
+            : base($"{entityName} with key '{key}' already exists.") { }
     }
+    public class FlightConflictException : Exception
+    {
+        public FlightConflictException(string message) 
+            : base(message) { }
+    }
+
 }

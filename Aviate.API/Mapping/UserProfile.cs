@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Aviate.API.Dto;
+using Aviate.API.Dto.Admin;
 using Aviate.API.Dto.User;
 using Aviate.Core.Contracts;
 using Aviate.Core.Models;

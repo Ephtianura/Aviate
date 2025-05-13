@@ -1,6 +1,6 @@
 ﻿using Aviate.Core.Enums;
 
-namespace Aviate.API.Dto.Airplane
+namespace Aviate.API.Dto.Admin
 {
     public record GetAirplaneAdminResponse(
       Guid Id,

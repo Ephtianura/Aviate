@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Aviate.API.Dto;
-using Aviate.API.Dto.Airport;
+using Aviate.API.Dto.Admin;
 using Aviate.Application.Contracts;
 using Aviate.Application.Dto.Airport;
 using Aviate.Core.Filters;

@@ -1,166 +1,237 @@
-﻿//using Aviate.Application.Dto;
-//using Aviate.Core.Contracts;
-//using Aviate.Core.Filters;
-//using Aviate.Core.Models;
-//using Aviate.DataAccess.Repositories;
-//using FluentValidation;
+﻿using Aviate.Application.Dto.Flight;
+using Aviate.Application.Exceptions;
+using Aviate.Core.Contracts;
+using Aviate.Core.Filters;
+using Aviate.Core.Models;
+using Aviate.DataAccess.Repositories;
+using FluentValidation;
+using System.Security.Cryptography;
+using System.Text;
 
-//namespace Aviate.Application.Services
-//{
-//    public class FlightService
-//    {
-//        private readonly IFlightRepository _flights;
-//        private readonly IAirplaneRepository _airplanes;
-//        private readonly IAirportRepository _airports;
-//        private readonly IValidator<FlightRequest> _validator;
-//        private readonly IValidator<FlightFilter> _filterValidator;
+namespace Aviate.Application.Services
+{
+    public class FlightService : IFlightService
+    {
+        private readonly IFlightRepository _flights;
+        private readonly IAirplaneRepository _airplanes;
+        private readonly IAirportRepository _airports;
+        private readonly IValidator<FlightCreateDto> _createValidator;
+        private readonly IValidator<FlightUpdateDto> _updateValidator;
+        private readonly IValidator<FlightFilter> _filterValidator;
 
-//        public FlightService(
-//            IFlightRepository flights,
-//            IAirplaneRepository airplanes,
-//            IAirportRepository airports,
-//            IValidator<FlightRequest> validator,
-//            IValidator<FlightFilter> filterValidator)
-//        {
-//            _flights = flights;
-//            _airplanes = airplanes;
-//            _airports = airports;
-//            _validator = validator;
-//            _filterValidator = filterValidator;
-//        }
+        public FlightService
+            (
+            IFlightRepository flights,
+            IAirplaneRepository airplanes,
+            IAirportRepository airports,
+            IValidator<FlightCreateDto> createValidator,
+            IValidator<FlightUpdateDto> updateValidator,
+            IValidator<FlightFilter> filterValidator
+            )
+        {
+            _flights = flights;
+            _airplanes = airplanes;
+            _airports = airports;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
+            _filterValidator = filterValidator;
 
-//        // ===================== Get by Id =====================
-//        public async Task<Flight> GetByIdAsync(Guid id)
-//        {
-//            var flight = await _flights.GetByIdAsync(id);
-//            if (flight == null)
-//                throw new KeyNotFoundException($"Flight with id {id} not found.");
-//            return flight;
-//        }
+        }
 
-//        // ===================== Get Filtered =====================
-//        public async Task<PagedResult<Flight>> GetFilteredAsync(FlightFilter filter)
-//        {
-//            var validationResult = await _filterValidator.ValidateAsync(filter);
-//            if (!validationResult.IsValid)
-//                throw new ValidationException(validationResult.Errors);
+        // Отримати рейс по ID
+        public async Task<Flight> GetByIdAsync(Guid id)
+        {
+            return await GetFlightByIdAsync(id); ;
+        }
 
-//            var flights = await _flights.GetFilteredAsync(filter);
-//            if (flights == null)
-//                throw new KeyNotFoundException("Flights not found.");
-//            return flights;
-//        }
+        // Отримати рейси за фільтром
+        public async Task<PagedResult<Flight>> GetFilteredAsync(FlightFilter filter)
+        {
+            // Валідація фільтра
+            await _filterValidator.ValidateAndThrowAsync(filter);
 
-//        // ===================== Create =====================
-//        public async Task<Flight> CreateAsync(FlightRequest dto)
-//        {
-//            var validationResult = await _validator.ValidateAsync(dto);
-//            if (!validationResult.IsValid)
-//                throw new ValidationException(validationResult.Errors);
+            return await _flights.GetFilteredAsync(filter);
+        }
 
-//            // Проверка уникальности номера рейса
-//            var existing = await _flights.GetByFlightNumberAsync(dto.FlightNumber.Trim().ToUpperInvariant());
-//            if (existing != null)
-//                throw new ArgumentException($"Flight with number {dto.FlightNumber} already exists.");
+        // Створити рейс
+        public async Task<Flight> CreateAsync(FlightCreateDto request)
+        {
+            // Валідація запиту
+            await _createValidator.ValidateAndThrowAsync(request);
 
-//            var airplane = await _airplanes.GetByIdAsync(dto.AirplaneId);
-//            if (airplane == null)
-//                throw new KeyNotFoundException($"Airplane with id {dto.AirplaneId} not found.");
+            var airplane = await _airplanes.GetByIdAsync(request.AirplaneId);
+            if (airplane is null)
+                throw new EntityNotFoundException("Airplane", request.AirplaneId);
 
-//            var departureAirport = await _airports.GetByIdAsync(dto.DepartureAirportId);
-//            if (departureAirport == null)
-//                throw new KeyNotFoundException($"Departure airport with id {dto.DepartureAirportId} not found.");
+            var totalSeats = request.EconomySeats + request.BusinessSeats + request.FirstClassSeats;
 
-//            var arrivalAirport = await _airports.GetByIdAsync(dto.ArrivalAirportId);
-//            if (arrivalAirport == null)
-//                throw new KeyNotFoundException($"Arrival airport with id {dto.ArrivalAirportId} not found.");
+            if (airplane.Capacity < totalSeats)
+                throw new ArgumentException("Total number of seats exceeds airplane capacity");
 
-//            var flight = Flight.Create(
-//                airplane,
-//                departureAirport,
-//                arrivalAirport,
-//                dto.FlightNumber,
-//                dto.BasePrice,
-//                dto.DepartureTime,
-//                dto.ArrivalTime,
-//                dto.EconomySeats,
-//                dto.BusinessSeats,
-//                dto.FirstClassSeats
-//            );
 
-//            if (dto.Status.HasValue)
-//                flight.ChangeStatus(dto.Status.Value);
+            // Перевірка чи не занятий літак
+            var airplaneConflict = await _flights.ExistsForAirplaneAtTimeAsync(request.AirplaneId, request.DepartureTime);
+            if (airplaneConflict)
+                throw new FlightConflictException("This airplane already has a flight at the same departure time.");
 
-//            await _flights.AddAsync(flight);
-//            return flight;
-//        }
+            // Перевірка чи нема такого самого рейса
+            var routeConflict = await _flights.ExistsAsync(
+                    request.AirplaneId,
+                    request.DepartureAirportId,
+                    request.ArrivalAirportId,
+                    request.DepartureTime
+                );
+            if (routeConflict)
+                throw new FlightConflictException("A flight for this route already exists at the same time.");
 
-//        // ===================== Update =====================
-//        public async Task UpdateAsync(Guid id, FlightRequest dto)
-//        {
-//            var flight = await GetByIdAsync(id);
 
-//            var validationResult = await _validator.ValidateAsync(dto);
-//            if (!validationResult.IsValid)
-//                throw new ValidationException(validationResult.Errors);
+            var flightNumber = GenerateFlightNumber(
+            request.AirplaneId,
+            request.DepartureAirportId,
+            request.ArrivalAirportId,
+            request.DepartureTime);
 
-//            // Изменяем номер рейса
-//            if (!string.IsNullOrWhiteSpace(dto.FlightNumber) && dto.FlightNumber != flight.FlightNumber)
-//            {
-//                var existing = await _flights.GetByFlightNumberAsync(dto.FlightNumber.Trim().ToUpperInvariant());
-//                if (existing != null && existing.Id != id)
-//                    throw new ArgumentException($"Flight number {dto.FlightNumber} already exists.");
-//                flight.ChangeFlightNumber(dto.FlightNumber.Trim().ToUpperInvariant());
-//            }
+            var departureAirport = await _airports.GetByIdAsync(request.DepartureAirportId);
+            if (departureAirport is null)
+                throw new EntityNotFoundException("Airport", request.DepartureAirportId);
 
-//            // Изменяем цены и расписание
-//            if (dto.BasePrice != flight.BasePrice)
-//                flight.ChangeBasePrice(dto.BasePrice);
+            var arrivalAirport = await _airports.GetByIdAsync(request.ArrivalAirportId);
+            if (arrivalAirport is null)
+                throw new EntityNotFoundException("Airport", request.ArrivalAirportId);
 
-//            if (dto.DepartureTime != flight.DepartureTime || dto.ArrivalTime != flight.ArrivalTime)
-//                flight.ChangeSchedule(dto.DepartureTime, dto.ArrivalTime);
 
-//            // Изменяем статус
-//            if (dto.Status.HasValue && dto.Status.Value != flight.Status)
-//                flight.ChangeStatus(dto.Status.Value);
+            // Створення рейсу (автоматичне заповнення місць у домені)
+            var flight = Flight.Create(
 
-//            // Изменяем самолет
-//            if (dto.AirplaneId != flight.AirplaneId)
-//            {
-//                var airplane = await _airplanes.GetByIdAsync(dto.AirplaneId);
-//                if (airplane == null)
-//                    throw new KeyNotFoundException($"Airplane with id {dto.AirplaneId} not found.");
-//                flight.AssignAirplane(airplane);
-//            }
+                airplane,
+                departureAirport,
+                arrivalAirport,
 
-//            // Изменяем аэропорты
-//            if (dto.DepartureAirportId != flight.DepartureAirportId)
-//            {
-//                var departureAirport = await _airports.GetByIdAsync(dto.DepartureAirportId);
-//                if (departureAirport == null)
-//                    throw new KeyNotFoundException($"Departure airport with id {dto.DepartureAirportId} not found.");
-//                flight.AssignDepartureAirport(departureAirport);
-//            }
+                flightNumber,
+                request.BasePrice,
 
-//            if (dto.ArrivalAirportId != flight.ArrivalAirportId)
-//            {
-//                var arrivalAirport = await _airports.GetByIdAsync(dto.ArrivalAirportId);
-//                if (arrivalAirport == null)
-//                    throw new KeyNotFoundException($"Arrival airport with id {dto.ArrivalAirportId} not found.");
-//                flight.AssignArrivalAirport(arrivalAirport);
-//            }
+                request.DepartureTime,
+                request.ArrivalTime,
 
-//            // Генерация мест
-//            flight.GenerateSeats(dto.EconomySeats, dto.BusinessSeats, dto.FirstClassSeats);
+                request.EconomySeats,
+                request.BusinessSeats,
+                request.FirstClassSeats
+            );
 
-//            await _flights.UpdateAsync(flight);
-//        }
+            await _flights.AddAsync(flight);
+            return flight;
+        }
 
-//        // ===================== Delete =====================
-//        public async Task DeleteAsync(Guid id)
-//        {
-//            var flight = await GetByIdAsync(id);
-//            await _flights.DeleteAsync(flight);
-//        }
-//    }
-//}
+        // Оновити рейс
+        public async Task UpdateAsync(Guid id, FlightUpdateDto request)
+        {
+            // Валідація запиту
+            await _updateValidator.ValidateAndThrowAsync(request);
+
+            // Отримання рейсу
+            var flight = await GetFlightByIdAsync(id);
+
+
+            // Що передано - міняємо
+            if (request.AirplaneId.HasValue && request.AirplaneId.Value != flight.AirplaneId)
+            {
+                var airplane = await _airplanes.GetByIdAsync(request.AirplaneId.Value);
+
+                if (airplane is null)
+                    throw new EntityNotFoundException("Airplane", request.AirplaneId.Value);
+
+                flight.AssignAirplane(airplane);
+            }
+
+            if (request.DepartureAirportId.HasValue && request.DepartureAirportId.Value != flight.DepartureAirportId)
+            {
+                var departureAirport = await _airports.GetByIdAsync(request.DepartureAirportId.Value);
+
+                if (departureAirport is null)
+                    throw new EntityNotFoundException("Airport", request.DepartureAirportId.Value);
+
+                flight.AssignDepartureAirport(departureAirport);
+            }
+
+            if (request.ArrivalAirportId.HasValue && request.ArrivalAirportId.Value != flight.ArrivalAirportId)
+            {
+                var arrivalAirport = await _airports.GetByIdAsync(request.ArrivalAirportId.Value);
+
+                if (arrivalAirport is null)
+                    throw new EntityNotFoundException("Airport", request.ArrivalAirportId.Value);
+
+                flight.AssignArrivalAirport(arrivalAirport);
+            }
+
+            if (request.BasePrice.HasValue && request.BasePrice.Value != flight.BasePrice)
+                flight.ChangeBasePrice(request.BasePrice.Value);
+
+            if (request.Status.HasValue && request.Status.Value != flight.Status)
+                flight.ChangeStatus(request.Status.Value);
+
+            if (request.DepartureTime.HasValue && request.ArrivalTime.HasValue)
+                flight.ChangeSchedule(request.DepartureTime.Value, request.ArrivalTime.Value);
+
+            if (request.AirplaneId.HasValue && request.DepartureTime.HasValue)
+            {
+                var airplaneConflict = await _flights.ExistsForAirplaneAtTimeAsync(request.AirplaneId.Value, request.DepartureTime.Value);
+                if (airplaneConflict)
+                    throw new FlightConflictException("This airplane already has a flight at the same departure time.");
+            }
+
+            // Перевірка чи нема такого самого рейса
+            if (request.AirplaneId.HasValue && request.DepartureAirportId.HasValue &&
+                request.ArrivalAirportId.HasValue && request.DepartureTime.HasValue)
+            {
+                var routeConflict = await _flights.ExistsAsync(request.AirplaneId.Value, request.DepartureAirportId.Value,
+                    request.ArrivalAirportId.Value, request.DepartureTime.Value);
+
+                if (routeConflict)
+                    throw new FlightConflictException("A flight for this route already exists at the same time.");
+            }
+
+            // Оновлюємо
+            await _flights.UpdateAsync(flight);
+        }
+
+        // Видалити рейс
+        public async Task DeleteAsync(Guid id)
+        {
+            var flight = await GetFlightByIdAsync(id);
+            await _flights.DeleteAsync(flight);
+        }
+
+        // Отримати рейс
+        private async Task<Flight> GetFlightByIdAsync(Guid id)
+        {
+            var flight = await _flights.GetByIdAsync(id);
+            if (flight == null)
+                throw new EntityNotFoundException("Flight", id);
+            return flight;
+        }
+
+        // Генерація випадкового номера рейсу
+        private string GenerateFlightNumber
+            (
+            Guid airplaneId,
+            Guid departureAirportId,
+            Guid arrivalAirportId,
+            DateTimeOffset departureTime,
+            string airlineCode = "AV"
+            )
+        {
+            airlineCode = airlineCode.ToUpperInvariant();
+
+            var input = $"{airlineCode}-{airplaneId}-{departureAirportId}-{arrivalAirportId}-{departureTime:yyyyMMddHHmm}";
+
+            using var sha = SHA256.Create();
+            var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            var number = BitConverter.ToUInt32(hash, 0) % 1_000_000;
+            var numberPart = number.ToString("D6");
+
+            return $"{airlineCode}{numberPart}";
+        }
+
+    }
+}

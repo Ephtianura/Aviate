@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Aviate.Application.Dto.Airport
+﻿namespace Aviate.Application.Dto.Airport
 {
     public record AirportUpdateDto(
         string? Name,

@@ -97,13 +97,7 @@ namespace Aviate.Core.Models
         }
 
         // ===================== Оновлення =====================
-        public void ChangeFlightNumber(string newFlightNumber)
-        {
-            if (string.IsNullOrWhiteSpace(newFlightNumber))
-                throw new ArgumentException("FlightNumber cannot be empty");
-            FlightNumber = newFlightNumber.Trim();
-            Touch();
-        }
+
         public void ChangeBasePrice(decimal newBasePrice)
         {
             if (newBasePrice < 0)

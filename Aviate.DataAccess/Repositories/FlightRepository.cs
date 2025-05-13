@@ -11,35 +11,42 @@ namespace Aviate.DataAccess.Repositories
         private readonly AviateDbContext _dbContext;
         public FlightRepository(AviateDbContext db) => _dbContext = db;
 
-        public async Task<Flight?> GetByIdAsync(Guid id) =>
-            await _dbContext.Flights
+        public async Task<bool> ExistsAsync(string flightNumber)
+        {
+            return await _dbContext.Flights.AnyAsync(f => f.FlightNumber == flightNumber);
+        }
+        public async Task<bool> ExistsForAirplaneAtTimeAsync(Guid airplaneId, DateTimeOffset departureTime)
+        {
+            return await _dbContext.Flights.AnyAsync(f => f.AirplaneId == airplaneId && f.DepartureTime == departureTime);
+        }
+
+        public async Task<bool> ExistsAsync(Guid airplaneId, Guid departureAirportId, Guid arrivalAirportId, DateTimeOffset departureTime)
+        {
+            return await _dbContext.Flights.AnyAsync(f =>
+                f.AirplaneId == airplaneId &&
+                f.DepartureAirportId == departureAirportId &&
+                f.ArrivalAirportId == arrivalAirportId &&
+                f.DepartureTime == departureTime
+            );
+        }
+
+
+        public async Task<Flight?> GetByIdAsync(Guid id)
+        {
+            return await _dbContext.Flights
                 .Include(f => f.Airplane)
                 .Include(f => f.DepartureAirport)
                 .Include(f => f.ArrivalAirport)
                 .FirstOrDefaultAsync(f => f.Id == id);
-
-
-        public async Task<Flight> GetByIdOrThrowAsync(Guid id)
-        {
-            var flight = await GetByIdAsync(id);
-            if (flight == null)
-                throw new KeyNotFoundException($"Flight with id {id} not found.");
-            return flight;
         }
 
-        public async Task<Flight?> GetByFlightNumberAsync(string flightNumber) =>
-            await _dbContext.Flights
+        public async Task<Flight?> GetByFlightNumberAsync(string flightNumber)
+        {
+            return await _dbContext.Flights
                 .Include(f => f.Airplane)
                 .Include(f => f.DepartureAirport)
                 .Include(f => f.ArrivalAirport)
                 .FirstOrDefaultAsync(f => f.FlightNumber == flightNumber.Trim().ToUpperInvariant());
-
-        public async Task<Flight> GetByFlightNumberOrThrowAsync(string flightNumber)
-        {
-            var flight = await GetByFlightNumberAsync(flightNumber);
-            if (flight == null)
-                throw new KeyNotFoundException($"Flight with number {flightNumber} not found.");
-            return flight;
         }
 
         public async Task<PagedResult<Flight>> GetFilteredAsync(FlightFilter filter)

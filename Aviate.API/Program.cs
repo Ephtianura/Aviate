@@ -6,6 +6,7 @@ using Aviate.Application.Contracts;
 using Aviate.Application.Services;
 using Aviate.Application.Validation.AirplaneValidator;
 using Aviate.Application.Validation.AirportValidator;
+using Aviate.Application.Validation.FlightValidator;
 using Aviate.Application.Validation.UserValidator;
 using Aviate.Core.Contracts;
 using Aviate.DataAccess;
@@ -28,6 +29,7 @@ builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsi
 builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AirplaneCreateValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AirportCreateValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<FlightCreateValidator>();
 
 // Auto Mapper
 builder.Services.AddAutoMapper(cfg =>
@@ -35,6 +37,7 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<UserProfile>();
     cfg.AddProfile<AirplaneProfile>();
     cfg.AddProfile<AirportProfile>();
+    //cfg.AddProfile<FlightProfile>();
 });
 
 // InitialDB
@@ -50,11 +53,13 @@ builder.Services.AddDbContext<AviateDbContext>(
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAirplaneRepository, AirplaneRepository>();
 builder.Services.AddScoped<IAirportRepository, AirportRepository>();
+builder.Services.AddScoped<IFlightRepository, FlightRepository>();
 
 // DI Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAirplaneService, AirplaneService>();
 builder.Services.AddScoped<IAirportService, AirportService>();
+builder.Services.AddScoped<IFlightService, FlightService>();
 
 // DI Auth
 builder.Services.AddScoped<IAuthService, AuthService>();
