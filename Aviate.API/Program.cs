@@ -4,7 +4,7 @@ using Aviate.API.Mapping;
 using Aviate.API.Middleware.Exceptions;
 using Aviate.Application.Contracts;
 using Aviate.Application.Services;
-using Aviate.Application.Validation;
+using Aviate.Application.Validation.UserValidator;
 using Aviate.Core.Contracts;
 using Aviate.DataAccess;
 using Aviate.DataAccess.Repositories;
@@ -24,15 +24,17 @@ builder.Services.AddSwaggerGen();
 
 // FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterValidator>();
-builder.Services.AddFluentValidationAutoValidation()           // автоматическая валидация
-    .AddFluentValidationClientsideAdapters();      // поддержка клиентской валидации (если нужно для фронта)
-
+builder.Services.AddFluentValidationAutoValidation()           
+    .AddFluentValidationClientsideAdapters();   
 builder.Services.AddValidatorsFromAssemblyContaining<UserFilterValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AirplaneUpdateValidator>();
+
 
 // Auto Mapper
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile<UserProfile>();
+    cfg.AddProfile<AirplaneProfile>();
 });
 
 // InitialDB
@@ -46,9 +48,11 @@ builder.Services.AddDbContext<AviateDbContext>(
 
 // DI Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAirplaneRepository, AirplaneRepository>();
 
 // DI Services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAirplaneService, AirplaneService>();
 
 // DI Auth
 builder.Services.AddScoped<IAuthService, AuthService>();

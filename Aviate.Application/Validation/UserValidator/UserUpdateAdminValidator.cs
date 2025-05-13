@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aviate.Application.Validation
+namespace Aviate.Application.Validation.UserValidator
 {
     public class UserUpdateAdminValidator : AbstractValidator<UserUpdateAdminDto>
     {

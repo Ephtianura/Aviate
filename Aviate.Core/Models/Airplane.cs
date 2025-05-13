@@ -5,7 +5,13 @@ namespace Aviate.Core.Models
     // ================= AIRPLANE =================
     public class Airplane
     {
-        private Airplane(string model, string registrationNumber, int capacity, DateTimeOffset manufactureDate)
+        private Airplane
+            (
+            string model, 
+            string registrationNumber, 
+            int capacity, 
+            DateTimeOffset manufactureDate
+            )
         {
             Id = Guid.NewGuid() ;
             Model = model.Trim();
@@ -80,7 +86,6 @@ namespace Aviate.Core.Models
         }
 
         private void Touch() => UpdatedAt = DateTimeOffset.UtcNow;
-
         public override string ToString() => $"{Model} ({RegistrationNumber}) — {Status}, Capacity: {Capacity}";
     }
 }

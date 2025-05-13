@@ -14,19 +14,22 @@ namespace Aviate.Application.Services
         private readonly IValidator<UserUpdateDto> _updateValidator;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IValidator<UserUpdateAdminDto> _adminUpdateValidator;
+        private readonly IValidator<UserFilter> _filterValidator;
 
         public UserService
-        (
-            IUserRepository users,
-            IPasswordHasher passwordHasher,
-            IValidator<UserUpdateDto> updateValidator,
-            IValidator<UserUpdateAdminDto> adminUpdateValidator
-        )
+            (
+            IUserRepository users, 
+            IPasswordHasher passwordHasher, 
+            IValidator<UserUpdateDto> updateValidator, 
+            IValidator<UserUpdateAdminDto> adminUpdateValidator, 
+            IValidator<UserFilter> filterValidator
+            )
         {
             _users = users;
             _passwordHasher = passwordHasher;
             _updateValidator = updateValidator;
             _adminUpdateValidator = adminUpdateValidator;
+            _filterValidator = filterValidator;
         }
 
         // Отримати користувача по ID
@@ -34,15 +37,21 @@ namespace Aviate.Application.Services
         {
             var user = await _users.GetByIdAsync(id);
             if (user == null)
-                throw new KeyNotFoundException($"User with id {id} not found.");
+                throw new EntityNotFoundException("User", id);
+
             return user;
         }
         // Отримати користувачів за філтрами
         public async Task<PagedResult<User>> GetFilteredAsync(UserFilter filter)
-        {            
+        {
+            var validationResult = await _filterValidator.ValidateAsync(filter);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
             var users = await _users.GetFilteredAsync(filter);
             if (users == null)
-                throw new KeyNotFoundException($"Users not found.");
+                throw new EntityNotFoundException("User");
+
             return users;
         }
 
@@ -111,7 +120,7 @@ namespace Aviate.Application.Services
         {
             var user = await _users.GetByIdAsync(id);
             if (user == null)
-                throw new KeyNotFoundException($"User with id {id} not found.");
+                throw new EntityNotFoundException("User", id);
 
             await _users.DeleteAsync(user);
         }

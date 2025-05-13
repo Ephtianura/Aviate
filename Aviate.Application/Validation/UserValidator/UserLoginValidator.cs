@@ -1,7 +1,7 @@
 ﻿using Aviate.Application.Dto;
 using FluentValidation;
 
-namespace Aviate.Application.Validation
+namespace Aviate.Application.Validation.UserValidator
 {
     public class UserLoginValidator : AbstractValidator<LoginUserRequest>
 

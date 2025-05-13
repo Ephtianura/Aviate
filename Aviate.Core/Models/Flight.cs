@@ -2,22 +2,31 @@
 
 namespace Aviate.Core.Models
 {
-
+    // ================= FLIGHT =================
     public class Flight
     {
-        private Flight(Guid airplaneId, Guid departureAirportId, Guid arrivalAirportId, 
-            string flightNumber, decimal basePrice, 
-            DateTimeOffset departureTime, DateTimeOffset arrivalTime)
+        private Flight() { }
+        private Flight(
+            Airplane airplane,
+            Airport departureAirport,
+            Airport arrivalAirport,
+            string flightNumber,
+            decimal basePrice,
+            DateTimeOffset departureTime,
+            DateTimeOffset arrivalTime)
         {
             Id = Guid.NewGuid();
-            AirplaneId = airplaneId;
-            DepartureAirportId = departureAirportId;
-            ArrivalAirportId = arrivalAirportId;
-            FlightNumber = flightNumber.Trim();
+            AssignAirplane(airplane);
+            AssignDepartureAirport(departureAirport);
+            AssignArrivalAirport(arrivalAirport);
+
+            FlightNumber = flightNumber.Trim().ToUpperInvariant();
             BasePrice = basePrice;
             Status = FlightStatus.Scheduled;
             DepartureTime = departureTime;
             ArrivalTime = arrivalTime;
+
+            _seats = new List<Seat>();
             CreatedAt = DateTimeOffset.UtcNow;
             UpdatedAt = DateTimeOffset.UtcNow;
         }
@@ -53,21 +62,38 @@ namespace Aviate.Core.Models
         public IReadOnlyCollection<Seat> Seats => _seats.AsReadOnly();
 
 
+        // ===================== Фабричний метод створення рейсу =====================
         public static Flight Create(
-            Guid airplaneId, Guid departureAirportId, Guid arrivalAirportId,
-            string flightNumber, decimal basePrice,
-            DateTimeOffset departureTime, DateTimeOffset arrivalTime)
+            Airplane airplane,
+            Airport departureAirport,
+            Airport arrivalAirport,
+            string flightNumber,
+            decimal basePrice,
+            DateTimeOffset departureTime,
+            DateTimeOffset arrivalTime,
+            int economySeats,
+            int businessSeats,
+            int firstClassSeats)
         {
+            if (airplane == null) throw new ArgumentNullException(nameof(airplane));
+            if (departureAirport == null) throw new ArgumentNullException(nameof(departureAirport));
+            if (arrivalAirport == null) throw new ArgumentNullException(nameof(arrivalAirport));
+            if (departureAirport.Id == arrivalAirport.Id)
+                throw new ArgumentException("Departure and arrival airports cannot be the same.");
             if (string.IsNullOrWhiteSpace(flightNumber))
-                throw new ArgumentException("FlightNumber cannot be empty");
+                throw new ArgumentException("Flight number cannot be empty.");
             if (basePrice < 0)
-                throw new ArgumentException("The price cannot be negative");
-            if (departureTime > arrivalTime)
-                throw new ArgumentException("Departure time cannot be later than arrival time");
-            if (departureAirportId == arrivalAirportId)
-                throw new ArgumentException("Departure and arrival airports cannot be the same");
+                throw new ArgumentException("Base price cannot be negative.");
+            if (departureTime >= arrivalTime)
+                throw new ArgumentException("Departure time must be earlier than arrival time.");
 
-            return new Flight(airplaneId, departureAirportId, arrivalAirportId,flightNumber, basePrice, departureTime, arrivalTime);
+            var flight = new Flight(airplane, departureAirport, arrivalAirport,
+                                    flightNumber, basePrice, departureTime, arrivalTime);
+
+            // Генерація місць
+            flight.GenerateSeats(economySeats, businessSeats, firstClassSeats);
+
+            return flight;
         }
 
         // ===================== Оновлення =====================
@@ -78,7 +104,6 @@ namespace Aviate.Core.Models
             FlightNumber = newFlightNumber.Trim();
             Touch();
         }
-
         public void ChangeBasePrice(decimal newBasePrice)
         {
             if (newBasePrice < 0)
@@ -93,7 +118,6 @@ namespace Aviate.Core.Models
             Status = newStatus;
             Touch();
         }
-
         public void ChangeSchedule(DateTimeOffset newDepartureTime, DateTimeOffset newArrivalTime)
         {
             if (newDepartureTime >= newArrivalTime)
@@ -101,13 +125,6 @@ namespace Aviate.Core.Models
             DepartureTime = newDepartureTime;
             ArrivalTime = newArrivalTime;
             Touch();
-        }
-
-        public void AddSeat(string seatNumber, SeatClass seatClass)
-        {
-            if (_seats.Any(s => s.SeatNumber == seatNumber))
-                throw new ArgumentException("Seat already exists");
-            _seats.Add(new Seat(this.Id, seatNumber, seatClass));
         }
 
         // ===================== Навігація =====================
@@ -148,18 +165,19 @@ namespace Aviate.Core.Models
             int seatIndex = 1;
 
             for (int i = 0; i < economyCount; i++)
-                _seats.Add(new Seat(this.Id, $"E{seatIndex++}", SeatClass.Economy));
+                _seats.Add(Seat.Create(Id, $"E{seatIndex++}", SeatClass.Economy));
 
             for (int i = 0; i < businessCount; i++)
-                _seats.Add(new Seat(this.Id, $"B{seatIndex++}", SeatClass.Business));
+                _seats.Add(Seat.Create(Id, $"B{seatIndex++}", SeatClass.Business));
 
             for (int i = 0; i < firstClassCount; i++)
-                _seats.Add(new Seat(this.Id, $"F{seatIndex++}", SeatClass.First));
+                _seats.Add(Seat.Create(Id, $"F{seatIndex++}", SeatClass.First));
 
             Touch();
         }
 
         private void Touch() => UpdatedAt = DateTimeOffset.UtcNow;
-        public override string ToString() => $"{FlightNumber} ({DepartureAirport?.Code ?? DepartureAirportId} - {ArrivalAirport?.Code ?? ArrivalAirportId}) — {Status}, BasePrice: {BasePrice}";
+        //public override string ToString() =>
+        //   $"{FlightNumber} ({DepartureAirport?.Code ?? DepartureAirportId} - {ArrivalAirport?.Code ?? ArrivalAirportId}) — {Status}, BasePrice: {BasePrice}";
     }
 }

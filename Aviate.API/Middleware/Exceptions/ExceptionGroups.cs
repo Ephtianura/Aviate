@@ -11,11 +11,13 @@ public static class ExceptionGroups
         [HttpStatusCode.NotFound] =
         [
             typeof(KeyNotFoundException),
-            typeof(FileNotFoundException)
+            typeof(FileNotFoundException),
+            typeof(EntityNotFoundException)
         ],
-        //[HttpStatusCode.Conflict] = new[]
-        //{
-        //},
+        [HttpStatusCode.Conflict] =
+        [
+            typeof(EntityAlreadyExistsException),
+        ],
         [HttpStatusCode.Unauthorized] =
         [
             typeof(UnauthorizedAccessException),

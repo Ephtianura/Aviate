@@ -15,6 +15,7 @@ namespace Aviate.Core.Models
             RegistrationDate = DateTimeOffset.UtcNow;
             UpdatedDate = DateTimeOffset.UtcNow;
         }
+
         public Guid Id { get; private set; }
         public string FullName { get; private set; }
 
@@ -36,16 +37,22 @@ namespace Aviate.Core.Models
                 }
                 _email = value.Trim().ToLower();
             }
-        }
-       
+        }       
         public string PasswordHash { get; private set; } = null!;
         public string? Phone { get; private set; }
         public UserRole Role { get; private set; } = UserRole.User;
         public DateTimeOffset RegistrationDate { get; private set; }
         public DateTimeOffset UpdatedDate { get; private set; }
 
-        public static User Create(string fullName, string email, string passwordHash) => new User(fullName, email, passwordHash);
+        // ===================== Фабричний метод створення користувача =====================
+        public static User Create(string fullName, string email, string passwordHash)
+        {
+            if (string.IsNullOrWhiteSpace(fullName))
+                throw new ArgumentException("Full name cannot be empty");
+            return new User(fullName, email, passwordHash);
+        }
 
+        // ===================== Оновлення =====================
         public void ChangeFullName(string fullName)
         {
             if (string.IsNullOrWhiteSpace(fullName))
@@ -81,7 +88,6 @@ namespace Aviate.Core.Models
         }
 
         private void Touch() => UpdatedDate = DateTimeOffset.UtcNow;
-
         public override string ToString() => $"{FullName} ({Email}) | Role: {Role}";
     }
 }

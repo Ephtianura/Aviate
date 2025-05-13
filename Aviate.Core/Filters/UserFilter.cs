@@ -14,3 +14,4 @@ namespace Aviate.Core.Filters
         public int PageSize { get; set; } = 20;
     }
 }
+

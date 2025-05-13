@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Aviate.API.Dto;
+using Aviate.API.Dto.User;
 using Aviate.Application.Contracts;
 using Aviate.Application.Dto;
 using Aviate.Core.Filters;

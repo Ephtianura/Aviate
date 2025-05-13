@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using Aviate.API.Dto;
+using Aviate.API.Dto.Airplane;
+using Aviate.API.Dto.User;
 using Aviate.Application.Contracts;
 using Aviate.Application.Dto;
 using Aviate.Application.Exceptions;
@@ -38,7 +39,7 @@ namespace Aviate.API.Controllers
                 return Ok(responseAdmin);
             }
 
-            var response = _mapper.Map<GetUserResponse>(user);
+            var response = _mapper.Map<GetAirplaneAdminResponse>(user);
             return Ok(response);
         }
 

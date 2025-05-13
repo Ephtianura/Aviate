@@ -3,9 +3,9 @@
     // Статус рейсу
     public enum FlightStatus
     {
-        Scheduled = 0,
-        Delayed = 1,
-        Cancelled = 2,
-        Completed = 3
+        Scheduled = 0, // Заплановано
+        Delayed = 1, // Перенесено
+        Cancelled = 2, // Скасовано
+        Completed = 3 // Завершено
     }
 }

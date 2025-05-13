@@ -8,7 +8,6 @@ namespace Aviate.DataAccess.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly AviateDbContext _dbContext;
-
         public UserRepository(AviateDbContext db) => _dbContext = db;
 
         public async Task<User?> GetByIdAsync(Guid id) =>
@@ -84,3 +83,5 @@ namespace Aviate.DataAccess.Repositories
         }
     }
 }
+
+

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Aviate.API.Dto
+namespace Aviate.API.Dto.User
 {
     public record GetUserAdminResponse(
       Guid Id,

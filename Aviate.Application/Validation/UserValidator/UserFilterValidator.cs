@@ -2,7 +2,7 @@
 using FluentValidation;
 using System;
 
-namespace Aviate.Application.Validation
+namespace Aviate.Application.Validation.UserValidator
 {
     public class UserFilterValidator : AbstractValidator<UserFilter>
     {
