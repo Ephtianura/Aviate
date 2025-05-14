@@ -1,7 +1,6 @@
 ﻿using Aviate.Application.Contracts;
 using Aviate.Application.Dto.Airplane;
 using Aviate.Application.Exceptions;
-using Aviate.Core.Contracts;
 using Aviate.Core.Filters;
 using Aviate.Core.Models;
 using Aviate.DataAccess.Repositories;

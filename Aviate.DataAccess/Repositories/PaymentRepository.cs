@@ -1,5 +1,4 @@
-﻿using Aviate.Core.Contracts;
-using Aviate.Core.Filters;
+﻿using Aviate.Core.Filters;
 using Aviate.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +14,11 @@ namespace Aviate.DataAccess.Repositories
             await _dbContext.Payments
                 .Include(p => p.Booking)
                 .FirstOrDefaultAsync(p => p.Id == id);
+        public async Task<List<Payment>> GetByBookingIdAsync(Guid bookingId) =>
+            await _dbContext.Payments
+            .Where(p => p.BookingId == bookingId)
+            .ToListAsync();
+        
 
         public async Task<PagedResult<Payment>> GetFilteredAsync(PaymentFilter filter)
         {

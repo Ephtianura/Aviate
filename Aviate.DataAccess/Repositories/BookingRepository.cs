@@ -1,5 +1,4 @@
-﻿using Aviate.Core.Contracts;
-using Aviate.Core.Filters;
+﻿using Aviate.Core.Filters;
 using Aviate.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +16,13 @@ namespace Aviate.DataAccess.Repositories
                 .Include(b => b.Flight)
                 .Include(b => b.Seat)
                 .FirstOrDefaultAsync(b => b.Id == id);
+
+        public async Task<List<Booking>> GetByUserIdAsync(Guid userId) =>
+            await _dbContext.Bookings
+                .Where(b => b.UserId == userId)
+                .Include(b => b.Flight)
+                .Include(b => b.Seat)
+                .ToListAsync();
 
         public async Task<PagedResult<Booking>> GetFilteredAsync(BookingFilter filter)
         {

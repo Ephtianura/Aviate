@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Aviate.Application.Validation.FlightValidator
 {
-    public class FlightCreateValidator : AbstractValidator<FlightCreateDto>
+    public class FlightCreateValidator : AbstractValidator<BookingCreateDto>
     {
 
         public FlightCreateValidator()

@@ -18,6 +18,7 @@ public static class ExceptionGroups
         [
             typeof(EntityAlreadyExistsException),
             typeof(FlightConflictException),
+            typeof(ConflictException),
         ],
         [HttpStatusCode.Unauthorized] =
         [

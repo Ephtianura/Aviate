@@ -2,7 +2,7 @@
 
 namespace Aviate.Application.Dto.Flight
 {
-    public record FlightCreateDto(
+    public record BookingCreateDto(
             Guid AirplaneId,
             Guid DepartureAirportId,
             Guid ArrivalAirportId,

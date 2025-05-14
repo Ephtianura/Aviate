@@ -1,7 +1,6 @@
 ﻿using Aviate.Application.Contracts;
 using Aviate.Application.Dto.Airport;
 using Aviate.Application.Exceptions;
-using Aviate.Core.Contracts;
 using Aviate.Core.Filters;
 using Aviate.Core.Models;
 using Aviate.DataAccess.Repositories;
@@ -34,7 +33,7 @@ namespace Aviate.Application.Services
         // Отримати аеропорт по ID
         public async Task<Airport> GetByIdAsync(Guid id)
         {
-            return await GetAirportByIdAsync(id); ;
+            return await GetAirportByIdAsync(id);
         }
 
         // Отримати аеропорти за фільтром

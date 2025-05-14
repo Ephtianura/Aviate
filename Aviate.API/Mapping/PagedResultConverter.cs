@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Aviate.API.Dto;
-using Aviate.Core.Contracts;
+using Aviate.Core.Filters;
 
 namespace Aviate.API.Mapping
 {

@@ -1,4 +1,4 @@
-﻿namespace Aviate.Core.Contracts
+﻿namespace Aviate.Core.Filters
 {
     public class PagedResult<T>
     {

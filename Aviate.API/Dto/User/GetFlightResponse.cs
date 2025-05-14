@@ -4,23 +4,18 @@ using Aviate.Core.Models;
 namespace Aviate.API.Dto.User
 {
     record GetFlightResponse(
-        Guid Id,
+         Guid Id,
+        string FlightNumber,
+        decimal BasePrice,
+        FlightStatus Status,
+        DateTimeOffset DepartureTime,
+        DateTimeOffset ArrivalTime,
         Guid AirplaneId,
         Guid DepartureAirportId,
         Guid ArrivalAirportId,
-
-        string FlightNumber,
-        decimal BasePrice,
-
-        FlightStatus Status,
-
-        DateTimeOffset DepartureTime,
-        DateTimeOffset ArrivalTime,
-
-        Airplane Airplane,
-        Airport DepartureAirport,
-        Airport ArrivalAirport,
-
-        IReadOnlyCollection<Seat> Seats
+        GetAirplaneResponse Airplane,
+        GetAirportResponse DepartureAirport,
+        GetAirportResponse ArrivalAirport,
+        List<GetSeatResponse> Seats
  );
 }

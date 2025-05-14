@@ -1,10 +1,10 @@
-﻿namespace Aviate.API.Dto.Admin
+﻿namespace Aviate.API.Dto.User
 {
-    public record GetAirportAdminResponse(
+    public record GetAirportResponse(
         Guid Id,
         string Name,
         string Code,
         string Country,
         string City
-  );
+    );
 }

@@ -31,7 +31,7 @@ namespace Aviate.API.Controllers.Admin
         public async Task<IActionResult> GetById(Guid id)
         {
             var airplane = await _airplaneService.GetByIdAsync(id);
-            var response = _mapper.Map<GetAirplaneAdminResponse>(airplane);
+            var response = _mapper.Map<GetAirplaneResponse>(airplane);
             return Ok(response);
         }
 
@@ -40,7 +40,7 @@ namespace Aviate.API.Controllers.Admin
         public async Task<IActionResult> GetFiltered([FromQuery] AirplaneFilter filter)
         {
             var airplanes = await _airplaneService.GetFilteredAsync(filter);
-            var response = _mapper.Map<PagedResultResponse<GetAirplaneAdminResponse>>(airplanes);
+            var response = _mapper.Map<PagedResultResponse<GetAirplaneResponse>>(airplanes);
             return Ok(response);
         }
 

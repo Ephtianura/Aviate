@@ -1,5 +1,4 @@
-﻿using Aviate.Core.Contracts;
-using Aviate.Core.Filters;
+﻿using Aviate.Core.Filters;
 using Aviate.Core.Models;
 using Microsoft.EntityFrameworkCore;
 

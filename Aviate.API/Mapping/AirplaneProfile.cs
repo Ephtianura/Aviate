@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Aviate.API.Dto;
 using Aviate.API.Dto.Admin;
-using Aviate.Core.Contracts;
+using Aviate.API.Dto.User;
+using Aviate.Core.Filters;
 using Aviate.Core.Models;
 
 namespace Aviate.API.Mapping
@@ -10,10 +11,10 @@ namespace Aviate.API.Mapping
     {
         public AirplaneProfile()
         {
-            CreateMap<Airplane, GetAirplaneAdminResponse>().ReverseMap();
+            CreateMap<Airplane, GetAirplaneResponse>().ReverseMap();
 
-            CreateMap<PagedResult<Airplane>, PagedResultResponse<GetAirplaneAdminResponse>>()
-                .ConvertUsing(new PagedResultConverter<Airplane, GetAirplaneAdminResponse>());
+            CreateMap<PagedResult<Airplane>, PagedResultResponse<GetAirplaneResponse>>()
+                .ConvertUsing(new PagedResultConverter<Airplane, GetAirplaneResponse>());
         }
     }
 }

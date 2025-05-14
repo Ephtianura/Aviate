@@ -6,6 +6,7 @@ using Aviate.Application.Contracts;
 using Aviate.Application.Dto.Flight;
 using Aviate.Application.Services;
 using Aviate.Core.Filters;
+using Aviate.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,13 +42,13 @@ namespace Aviate.API.Controllers.Admin
         public async Task<IActionResult> GetFiltered([FromQuery] FlightFilter filter)
         {
             var flights = await _flightService.GetFilteredAsync(filter);
-            //var response = _mapper.Map<PagedResultResponse<GetFlightResponse>>(flights);
+            var response = _mapper.Map<PagedResultResponse<GetFlightsResponse>>(flights);
             return Ok(flights);
         }
 
         /// <summary>Створити рейс</summary>
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] FlightCreateDto request)
+        public async Task<IActionResult> Create([FromBody] BookingCreateDto request)
         {
             var flights = await _flightService.CreateAsync(request);
             return Ok(new ApiResponse("Flight successfully created"));

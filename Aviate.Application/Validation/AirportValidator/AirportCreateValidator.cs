@@ -1,30 +1,15 @@
-﻿using Aviate.Application.Dto.Airport;
+﻿using Aviate.Application.Dto.Booking;
 using FluentValidation;
 
-namespace Aviate.Application.Validation.AirportValidator
+namespace Aviate.Application.Validation.BookingValidator
 {
-    public class AirportCreateValidator : AbstractValidator<AirportCreateDto>
+    public class BookingCreateValidator : AbstractValidator<BookingCreateDto>
     {
-        public AirportCreateValidator()
+        public BookingCreateValidator()
         {
-            RuleFor(a => a.Name)
-                .NotEmpty().WithMessage("Name is required")
-                .MaximumLength(100).WithMessage("Airport name cannot exceed 100 characters");
-
-            RuleFor(a => a.Code)
-                .NotEmpty().WithMessage("Code is required")
-                .Length(3)
-                .Matches("^[A-Z]{3}$")
-                .WithMessage("The airport code must contain 3 capital letters A-Z");
-
-            RuleFor(a => a.Country)
-                .NotEmpty().WithMessage("Country is required")
-                .MaximumLength(100).WithMessage("Country cannot exceed 100 characters.");
-
-            RuleFor(a => a.City)
-                .NotEmpty().WithMessage("City is required")
-                .MaximumLength(100)
-                .WithMessage("City cannot exceed 100 characters");
+            RuleFor(x => x.UserId).NotEmpty().WithMessage("UserId is required");
+            RuleFor(x => x.FlightId).NotEmpty().WithMessage("FlightId is required");
+            RuleFor(x => x.SeatId).NotEmpty().WithMessage("SeatId is required");
         }
     }
 }

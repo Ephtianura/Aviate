@@ -2,7 +2,7 @@
 using Aviate.API.Dto;
 using Aviate.API.Dto.Admin;
 using Aviate.API.Dto.User;
-using Aviate.Core.Contracts;
+using Aviate.Core.Filters;
 using Aviate.Core.Models;
 
 namespace Aviate.API.Mapping

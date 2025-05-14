@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Aviate.API.Dto;
 using Aviate.API.Dto.Admin;
+using Aviate.API.Dto.User;
 using Aviate.Application.Contracts;
 using Aviate.Application.Dto.Airport;
 using Aviate.Core.Filters;
@@ -30,7 +31,7 @@ namespace Aviate.API.Controllers.Admin
         public async Task<IActionResult> GetById(Guid id)
         {
             var airports = await _airportsService.GetByIdAsync(id);
-            var response = _mapper.Map<GetAirportAdminResponse>(airports);
+            var response = _mapper.Map<GetAirportResponse>(airports);
             return Ok(response);
         }
 
@@ -39,7 +40,7 @@ namespace Aviate.API.Controllers.Admin
         public async Task<IActionResult> GetFiltered([FromQuery] AirportFilter filter)
         {
             var airports = await _airportsService.GetFilteredAsync(filter);
-            var response = _mapper.Map<PagedResultResponse<GetAirportAdminResponse>>(airports);
+            var response = _mapper.Map<PagedResultResponse<GetAirportResponse>>(airports);
             return Ok(response);
         }
 

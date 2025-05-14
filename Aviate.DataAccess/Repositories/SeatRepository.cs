@@ -1,5 +1,4 @@
-﻿using Aviate.Core.Contracts;
-using Aviate.Core.Filters;
+﻿using Aviate.Core.Filters;
 using Aviate.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +12,13 @@ namespace Aviate.DataAccess.Repositories
 
         public async Task<Seat?> GetByIdAsync(Guid id) =>
             await _dbContext.Seats.FindAsync(id);
+
+        public async Task<List<Seat>> GetByFlightIdAsync(Guid flightId)
+        {
+            return await _dbContext.Seats
+                .Where(s => s.FlightId == flightId)
+                .ToListAsync();
+        }
 
         public async Task<PagedResult<Seat>> GetFilteredAsync(SeatFilter filter)
         {
@@ -50,12 +56,12 @@ namespace Aviate.DataAccess.Repositories
             return new PagedResult<Seat>(items, totalCount, filter.Page, filter.PageSize);
         }
 
-
-        public async Task AddAsync(Seat seat)
+        public async Task AddRangeAsync(IEnumerable<Seat> seats)
         {
-            await _dbContext.Seats.AddAsync(seat);
+            await _dbContext.Seats.AddRangeAsync(seats);
             await _dbContext.SaveChangesAsync();
         }
+
 
         public async Task UpdateAsync(Seat seat)
         {
@@ -63,11 +69,6 @@ namespace Aviate.DataAccess.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Seat seat)
-        {
-            _dbContext.Seats.Remove(seat);
-            await _dbContext.SaveChangesAsync();
-        }
     }
 }
 

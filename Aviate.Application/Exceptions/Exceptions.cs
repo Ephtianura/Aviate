@@ -36,5 +36,10 @@ namespace Aviate.Application.Exceptions
         public FlightConflictException(string message) 
             : base(message) { }
     }
+    public class ConflictException : Exception
+    {
+        public ConflictException(string message)
+            : base(message) { }
+    }
 
 }

@@ -1,5 +1,4 @@
 ﻿using Aviate.Application.Dto.User;
-using Aviate.Core.Contracts;
 using Aviate.Core.Filters;
 using Aviate.Core.Models;
 

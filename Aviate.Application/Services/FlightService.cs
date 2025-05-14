@@ -1,6 +1,5 @@
 ﻿using Aviate.Application.Dto.Flight;
 using Aviate.Application.Exceptions;
-using Aviate.Core.Contracts;
 using Aviate.Core.Filters;
 using Aviate.Core.Models;
 using Aviate.DataAccess.Repositories;
@@ -15,7 +14,8 @@ namespace Aviate.Application.Services
         private readonly IFlightRepository _flights;
         private readonly IAirplaneRepository _airplanes;
         private readonly IAirportRepository _airports;
-        private readonly IValidator<FlightCreateDto> _createValidator;
+        private readonly ISeatRepository _seats;
+        private readonly IValidator<BookingCreateDto> _createValidator;
         private readonly IValidator<FlightUpdateDto> _updateValidator;
         private readonly IValidator<FlightFilter> _filterValidator;
 
@@ -24,7 +24,8 @@ namespace Aviate.Application.Services
             IFlightRepository flights,
             IAirplaneRepository airplanes,
             IAirportRepository airports,
-            IValidator<FlightCreateDto> createValidator,
+            ISeatRepository seats,
+            IValidator<BookingCreateDto> createValidator,
             IValidator<FlightUpdateDto> updateValidator,
             IValidator<FlightFilter> filterValidator
             )
@@ -32,6 +33,7 @@ namespace Aviate.Application.Services
             _flights = flights;
             _airplanes = airplanes;
             _airports = airports;
+            _seats = seats;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
             _filterValidator = filterValidator;
@@ -54,7 +56,7 @@ namespace Aviate.Application.Services
         }
 
         // Створити рейс
-        public async Task<Flight> CreateAsync(FlightCreateDto request)
+        public async Task<Flight> CreateAsync(BookingCreateDto request)
         {
             // Валідація запиту
             await _createValidator.ValidateAndThrowAsync(request);
@@ -119,6 +121,7 @@ namespace Aviate.Application.Services
             );
 
             await _flights.AddAsync(flight);
+            
             return flight;
         }
 
