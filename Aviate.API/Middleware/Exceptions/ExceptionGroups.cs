@@ -31,8 +31,11 @@ public static class ExceptionGroups
             typeof(ArgumentException),
             typeof(EmailAlreadyExistsException),
             typeof(AuthenticationException),
-            typeof(InvalidUserIdFormatException)
-            
+            typeof(InvalidUserIdFormatException)            
+        ],
+        [HttpStatusCode.FailedDependency] =
+        [
+            typeof(FailedDependency)
         ]
     };
 }

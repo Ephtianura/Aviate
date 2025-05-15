@@ -1,7 +1,8 @@
-﻿namespace Aviate.API.Dto.User
+﻿namespace Aviate.API.Dto.Admin
 {
-    public record GetSeatResponse(
+    public record GetSeatAdminResponse(
         Guid Id,
+        Guid FlightId,
         string Class,
         string SeatNumber,
         bool IsBooked

@@ -6,7 +6,7 @@ namespace Aviate.Application.Services
 {
     public interface IFlightService
     {
-        Task<Flight> CreateAsync(BookingCreateDto request);
+        Task<Flight> CreateAsync(FlightCreateDto request);
         Task DeleteAsync(Guid id);
         Task<Flight> GetByIdAsync(Guid id);
         Task<PagedResult<Flight>> GetFilteredAsync(FlightFilter filter);

@@ -1,15 +1,17 @@
-﻿using Aviate.Application.Dto.Booking;
+﻿using Aviate.Application.Dto.Airport;
+using Aviate.Application.Dto.Booking;
 using FluentValidation;
 
-namespace Aviate.Application.Validation.BookingValidator
+namespace Aviate.Application.Validation.AirportValidator
 {
-    public class BookingCreateValidator : AbstractValidator<BookingCreateDto>
+    public class AirportCreateValidator : AbstractValidator<AirportCreateDto>
     {
-        public BookingCreateValidator()
+        public AirportCreateValidator()
         {
-            RuleFor(x => x.UserId).NotEmpty().WithMessage("UserId is required");
-            RuleFor(x => x.FlightId).NotEmpty().WithMessage("FlightId is required");
-            RuleFor(x => x.SeatId).NotEmpty().WithMessage("SeatId is required");
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required");
+            RuleFor(x => x.Code).NotEmpty().WithMessage("Code is required");
+            RuleFor(x => x.Country).NotEmpty().WithMessage("Country is required");
+            RuleFor(x => x.City).NotEmpty().WithMessage("City is required");
         }
     }
 }

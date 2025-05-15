@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Aviate.API.Dto;
+using Aviate.API.Dto.Admin;
 using Aviate.API.Dto.User;
+using Aviate.API.Dto.User.Booking;
 using Aviate.Application.Contracts;
 using Aviate.Core.Filters;
 using Aviate.Core.Models;
@@ -9,17 +11,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Aviate.API.Controllers.Admin
 {
-    // ================= SEATS =================
-    [Route("api/seats")]
+    // ================= ADMIN-SEATS =================
+    [Route("api/admin/seats")]
     [ApiController]
 
-    [Authorize(Policy = "UserPolicy")]
-    public class SeatsController : ControllerBase
+    [Authorize(Policy = "AdminPolicy")]
+    public class AdminSeatsController : ControllerBase
     {
         private readonly ISeatService _seatService;
         private readonly IMapper _mapper;
 
-        public SeatsController(ISeatService seatsService, IMapper mapper)
+        public AdminSeatsController(ISeatService seatsService, IMapper mapper)
         {
             _seatService = seatsService;
             _mapper = mapper;
@@ -39,7 +41,7 @@ namespace Aviate.API.Controllers.Admin
         public async Task<IActionResult> GetFiltered([FromQuery] SeatFilter filter)
         {
             var seats = await _seatService.GetFilteredAsync(filter);
-            var response = _mapper.Map<PagedResultResponse<GetSeatResponse>>(seats);
+            var response = _mapper.Map<PagedResultResponse<GetSeatAdminResponse>>(seats);
             return Ok(response);
         }
 

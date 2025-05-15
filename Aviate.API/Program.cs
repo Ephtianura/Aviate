@@ -5,12 +5,14 @@ using Aviate.Application.Contracts;
 using Aviate.Application.Services;
 using Aviate.Application.Validation.AirplaneValidator;
 using Aviate.Application.Validation.AirportValidator;
+using Aviate.Application.Validation.BookingValidator;
 using Aviate.Application.Validation.FlightValidator;
 using Aviate.Application.Validation.UserValidator;
 using Aviate.Core.Contracts;
 using Aviate.DataAccess;
 using Aviate.DataAccess.Repositories;
 using Aviate.Infrastructure.Auth;
+using Aviate.Infrastructure.Payment;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.CookiePolicy;
@@ -29,7 +31,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AirplaneCreateValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AirportCreateValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<FlightCreateValidator>();
-
+builder.Services.AddValidatorsFromAssemblyContaining<BookingCreateValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<PaymentFilterValidator>();
 // Auto Mapper
 builder.Services.AddAutoMapper(cfg =>
 {
@@ -38,6 +41,7 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<AirportProfile>();
     cfg.AddProfile<FlightProfile>();
     cfg.AddProfile<SeatProfile>();
+    cfg.AddProfile<BookingProfile>();
 });
 
     
@@ -55,6 +59,8 @@ builder.Services.AddScoped<IAirplaneRepository, AirplaneRepository>();
 builder.Services.AddScoped<IAirportRepository, AirportRepository>();
 builder.Services.AddScoped<IFlightRepository, FlightRepository>();
 builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 // DI Services
 builder.Services.AddScoped<IUserService, UserService>();
@@ -62,11 +68,14 @@ builder.Services.AddScoped<IAirplaneService, AirplaneService>();
 builder.Services.AddScoped<IAirportService, AirportService>();
 builder.Services.AddScoped<IFlightService, FlightService>();
 builder.Services.AddScoped<ISeatService, SeatService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 // DI Infrastructure
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IPaymentGatewayMock, PaymentGatewayMock>();
 
 // Налаштування JWT токену
 builder.Services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));

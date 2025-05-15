@@ -15,4 +15,9 @@
         public InvalidUserIdFormatException()
             : base("Invalid user ID format.") { }
     }
+    public class FailedDependency : ArgumentException
+    {
+        public FailedDependency(string message)
+            : base(message) { }
+    }
 }

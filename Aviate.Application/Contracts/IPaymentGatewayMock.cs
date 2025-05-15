@@ -1,4 +1,4 @@
-﻿using Aviate.Application.Services;
+﻿using Aviate.Application.Dto.Payment;
 using Aviate.Core.Enums;
 
 namespace Aviate.Infrastructure.Payment

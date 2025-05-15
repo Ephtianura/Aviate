@@ -6,6 +6,6 @@ namespace Aviate.Application.Dto.Booking
     public record BookingCreateDto(
         Guid UserId,
         Guid FlightId,
-        Guid SeatId
+        Guid? SeatId
    );
 }

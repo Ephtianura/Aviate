@@ -1,7 +1,7 @@
-﻿using Aviate.Core.Enums;
-using Aviate.Core.Models;
+﻿using Aviate.API.Dto.Admin;
+using Aviate.Core.Enums;
 
-namespace Aviate.API.Dto.User
+namespace Aviate.API.Dto.User.Flight
 {
     record GetFlightResponse(
          Guid Id,
@@ -16,6 +16,6 @@ namespace Aviate.API.Dto.User
         GetAirplaneResponse Airplane,
         GetAirportResponse DepartureAirport,
         GetAirportResponse ArrivalAirport,
-        List<GetSeatResponse> Seats
+        List<GetSeatAdminResponse> Seats
  );
 }

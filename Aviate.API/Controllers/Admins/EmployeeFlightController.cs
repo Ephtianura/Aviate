@@ -1,22 +1,19 @@
 ﻿using AutoMapper;
 using Aviate.API.Dto;
-using Aviate.API.Dto.Admin;
 using Aviate.API.Dto.User;
-using Aviate.Application.Contracts;
 using Aviate.Application.Dto.Flight;
 using Aviate.Application.Services;
 using Aviate.Core.Filters;
-using Aviate.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aviate.API.Controllers.Admin
 {
-    // ================= ADMIN-AIRPLANES =================
+    // ================= ADMIN-FLIGHT =================
     [Route("api/admin/flights")]
     [ApiController]
 
-    [Authorize(Policy = "AdminPolicy")]
+    [Authorize(Policy = "EmployeePolicy")]
     public class AdminFlightsController : ControllerBase
     {
         private readonly IFlightService _flightService;
@@ -28,27 +25,9 @@ namespace Aviate.API.Controllers.Admin
             _mapper = mapper;
         }
 
-        /// <summary>Отримати рейс по ID</summary>
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById(Guid id)
-        {
-            var flight = await _flightService.GetByIdAsync(id);
-            var response = _mapper.Map<GetFlightResponse>(flight);
-            return Ok(response);
-        }
-
-        /// <summary>Отримати рейси за фільтром</summary>
-        [HttpGet]
-        public async Task<IActionResult> GetFiltered([FromQuery] FlightFilter filter)
-        {
-            var flights = await _flightService.GetFilteredAsync(filter);
-            var response = _mapper.Map<PagedResultResponse<GetFlightsResponse>>(flights);
-            return Ok(flights);
-        }
-
         /// <summary>Створити рейс</summary>
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BookingCreateDto request)
+        public async Task<IActionResult> Create([FromBody] FlightCreateDto request)
         {
             var flights = await _flightService.CreateAsync(request);
             return Ok(new ApiResponse("Flight successfully created"));

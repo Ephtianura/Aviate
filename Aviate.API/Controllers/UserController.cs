@@ -4,7 +4,6 @@ using Aviate.API.Dto.User;
 using Aviate.Application.Contracts;
 using Aviate.Application.Dto.User;
 using Aviate.Application.Exceptions;
-using Aviate.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +11,7 @@ namespace Aviate.API.Controllers
 {
     // ================= USER =================
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/user")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

@@ -14,6 +14,9 @@ namespace Aviate.DataAccess.Repositories
             await _dbContext.Bookings
                 .Include(b => b.User)
                 .Include(b => b.Flight)
+                    .ThenInclude(b => b.ArrivalAirport)
+                .Include(b => b.Flight)
+                    .ThenInclude(b => b.DepartureAirport)
                 .Include(b => b.Seat)
                 .FirstOrDefaultAsync(b => b.Id == id);
 
@@ -21,6 +24,9 @@ namespace Aviate.DataAccess.Repositories
             await _dbContext.Bookings
                 .Where(b => b.UserId == userId)
                 .Include(b => b.Flight)
+                    .ThenInclude(b => b.ArrivalAirport)
+                .Include(b => b.Flight)
+                    .ThenInclude(b => b.DepartureAirport)
                 .Include(b => b.Seat)
                 .ToListAsync();
 
@@ -29,6 +35,9 @@ namespace Aviate.DataAccess.Repositories
             var query = _dbContext.Bookings
                 .Include(b => b.User)
                 .Include(b => b.Flight)
+                    .ThenInclude(b => b.ArrivalAirport)
+                .Include(b => b.Flight)
+                    .ThenInclude(b => b.DepartureAirport)
                 .Include(b => b.Seat)
                 .AsQueryable();
 

@@ -15,7 +15,7 @@ namespace Aviate.Application.Services
         private readonly IAirplaneRepository _airplanes;
         private readonly IAirportRepository _airports;
         private readonly ISeatRepository _seats;
-        private readonly IValidator<BookingCreateDto> _createValidator;
+        private readonly IValidator<FlightCreateDto> _createValidator;
         private readonly IValidator<FlightUpdateDto> _updateValidator;
         private readonly IValidator<FlightFilter> _filterValidator;
 
@@ -25,7 +25,7 @@ namespace Aviate.Application.Services
             IAirplaneRepository airplanes,
             IAirportRepository airports,
             ISeatRepository seats,
-            IValidator<BookingCreateDto> createValidator,
+            IValidator<FlightCreateDto> createValidator,
             IValidator<FlightUpdateDto> updateValidator,
             IValidator<FlightFilter> filterValidator
             )
@@ -56,7 +56,7 @@ namespace Aviate.Application.Services
         }
 
         // Створити рейс
-        public async Task<Flight> CreateAsync(BookingCreateDto request)
+        public async Task<Flight> CreateAsync(FlightCreateDto request)
         {
             // Валідація запиту
             await _createValidator.ValidateAndThrowAsync(request);

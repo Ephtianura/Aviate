@@ -62,7 +62,7 @@ namespace Aviate.Application.Services
         public async Task<PagedResult<Payment>> GetFilteredAsync(PaymentFilter filter)
         {
             // Валідація фільтра
-            //await _filterValidator.ValidateAndThrowAsync(filter);
+            await _filterValidator.ValidateAndThrowAsync(filter);
             return await _payments.GetFilteredAsync(filter);
         }
 

@@ -1,4 +1,4 @@
-﻿using Aviate.Application.Services;
+﻿using Aviate.Application.Dto.Payment;
 using Aviate.Core.Enums;
 using Aviate.Core.Filters;
 using Aviate.Core.Models;

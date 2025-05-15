@@ -8,20 +8,37 @@ namespace Aviate.Application.Validation.FlightValidator
 
         public FlightUpdateValidator()
         {
+            RuleFor(f => f.AirplaneId)
+                .NotEmpty()
+                .When(f => f.AirplaneId.HasValue)
+                .WithMessage("AirplaneId cannot be empty");
+
+            RuleFor(f => f.DepartureAirportId)
+                .NotEmpty()
+                .When(f => f.DepartureAirportId.HasValue)
+                .WithMessage("DepartureAirportId cannot be empty");
+
+            RuleFor(f => f.ArrivalAirportId)
+                .NotEmpty()
+                .When(f => f.ArrivalAirportId.HasValue)
+                .WithMessage("ArrivalAirportId cannot be empty");
+
             RuleFor(f => f.BasePrice)
-                .NotEmpty().WithMessage("NotImplementedException")
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("NotImplementedException");
+                .When(f => f.BasePrice.HasValue)
+                .WithMessage("BasePrice must be >= 0");
 
-            
             RuleFor(f => f.DepartureTime)
-                .NotEmpty().WithMessage("NotImplementedException")
-                .LessThan(f => f.ArrivalTime)
-                .WithMessage("Departure time must be earlier than arrival time");
+                .LessThan(f => f.ArrivalTime.Value)
+                .When(f => f.DepartureTime.HasValue && f.ArrivalTime.HasValue)
+                .WithMessage("DepartureTime must be earlier than ArrivalTime");
 
-            //RuleFor(f => f.Status)
-            //    .Must(s => !s.HasValue || Enum.IsDefined(typeof(FlightStatus), s.Value))
-            //    .WithMessage("Invalid flight status");
+            RuleFor(f => f.Status)
+                .IsInEnum()
+                .When(f => f.Status.HasValue)
+                .WithMessage("Invalid flight status");
         }
+
+
     }
 }

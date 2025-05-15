@@ -109,8 +109,30 @@ namespace Aviate.Core.Models
         {
             if (!Enum.IsDefined(typeof(FlightStatus), newStatus))
                 throw new ArgumentException("Invalid flight status");
-            Status = newStatus;
-            Touch();
+
+            // Не можна змінювати статус, якщо рейс уже завершено
+            if (Status == FlightStatus.Completed)
+            throw new InvalidOperationException("Cannot change status of a completed flight.");
+
+            // Не можна запланувати рейс, якщо він уже в польоті або завершено
+            if (newStatus == FlightStatus.Scheduled && (Status == FlightStatus.InFlight || Status == FlightStatus.Completed))
+                throw new InvalidOperationException("Cannot schedule a flight that is in flight or completed.");
+
+            // Не можна перевести в InFlight, якщо рейс скасовано або завершено
+            if (newStatus == FlightStatus.InFlight && (Status == FlightStatus.Cancelled || Status == FlightStatus.Completed))
+                throw new InvalidOperationException("Cannot set flight in flight if it is cancelled or completed.");
+
+            // Не можна скасовувати завершений рейс
+            if (newStatus == FlightStatus.Cancelled && Status == FlightStatus.Completed)
+                throw new InvalidOperationException("Cannot cancel a completed flight.");
+
+            // Delayed можна міняти на будь-який інший статус 
+            // (немає обмежень, крім завершеного)
+            if (Status == FlightStatus.Delayed || Status == FlightStatus.Scheduled || Status == FlightStatus.InFlight || Status == FlightStatus.Cancelled)
+            {
+                Status = newStatus;
+                Touch();
+            }            
         }
         public void ChangeSchedule(DateTimeOffset newDepartureTime, DateTimeOffset newArrivalTime)
         {
