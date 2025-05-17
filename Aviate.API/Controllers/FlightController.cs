@@ -43,8 +43,8 @@ namespace Aviate.API.Controllers.Admin
         public async Task<IActionResult> GetFiltered([FromQuery] FlightFilter filter)
         {
             var flights = await _flightService.GetFilteredAsync(filter);
-            var response = _mapper.Map<PagedResultResponse<GetFlightBookingResponse>>(flights);
-            return Ok(flights);
+            var response = _mapper.Map<PagedResultResponse<GetFlightResponse>>(flights);
+            return Ok(response);
         }
     }
 }

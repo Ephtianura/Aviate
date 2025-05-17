@@ -38,5 +38,7 @@ public class FlightProfile : Profile
 
         CreateMap<PagedResult<Seat>, PagedResultResponse<GetSeatAdminResponse>>()
                 .ConvertUsing(new PagedResultConverter<Seat, GetSeatAdminResponse>());
+
+
     }
 }
