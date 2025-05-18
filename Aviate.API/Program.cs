@@ -90,6 +90,16 @@ builder.Services.AddApiAuthentication(jwtOptions);
 //    c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
 //});
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
+
+});
 // Створення додатку
 var app = builder.Build();
 
@@ -99,6 +109,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(builder =>
+    builder
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+        .WithOrigins("http://localhost:3000")
+);
+
+app.UseCors("AllowFrontend");
+app.UseCors("AllowLocalhost");
 
 // Параметри кукі
 app.UseCookiePolicy(new CookiePolicyOptions
