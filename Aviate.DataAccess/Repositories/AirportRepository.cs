@@ -26,7 +26,9 @@ namespace Aviate.DataAccess.Repositories
                 var term = filter.Search.Trim().ToLower();
                 query = query.Where(a =>
                     a.Name.ToLower().Contains(term) ||
-                    a.Code.ToLower().Contains(term));
+                    a.Code.ToLower().Contains(term) ||
+                    a.City.ToLower().Contains(term) ||
+                    a.Country.ToLower().Contains(term));
             }
 
             if (!string.IsNullOrWhiteSpace(filter.Country))

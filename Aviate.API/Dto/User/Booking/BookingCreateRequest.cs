@@ -2,6 +2,6 @@
 {
     public record BookingCreateRequest
     (
-        Guid FlightId, Guid SeatId
+        Guid FlightId, Guid? SeatId
     );
 }

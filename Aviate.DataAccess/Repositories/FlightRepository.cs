@@ -59,7 +59,12 @@ namespace Aviate.DataAccess.Repositories
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 var term = filter.Search.Trim().ToLower();
-                query = query.Where(f => f.FlightNumber.ToLower().Contains(term));
+                query = query.Where(
+                    f => f.FlightNumber.ToLower().Contains(term) ||
+                    f.ArrivalAirport.City.ToLower().Contains(term) ||
+                    f.ArrivalAirport.Country.ToLower().Contains(term) ||
+                    f.DepartureAirport.City.ToLower().Contains(term) ||
+                    f.DepartureAirport.Country.ToLower().Contains(term));
             }
 
             if (filter.AirplaneId.HasValue)

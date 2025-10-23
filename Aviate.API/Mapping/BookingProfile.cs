@@ -27,6 +27,9 @@ namespace Aviate.API.Mapping
                 .ForMember(dest => dest.Flight, opt => opt.MapFrom(src => src.Flight))
                 .ForMember(dest => dest.Seat, opt => opt.MapFrom(src => src.Seat));
 
+            CreateMap<BookingUserFilter, BookingAdminFilter>()
+            .ForMember(dest => dest.UserId, opt => opt.Ignore());
+
             // Маппинг страниц
             CreateMap<PagedResult<Booking>, PagedResultResponse<GetBookingResponse>>()
                 .ConvertUsing(new PagedResultConverter<Booking, GetBookingResponse>());

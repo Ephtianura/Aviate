@@ -5,6 +5,7 @@ using Aviate.Application.Contracts;
 using Aviate.Application.Dto.Booking;
 using Aviate.Application.Exceptions;
 using Aviate.Core.Enums;
+using Aviate.Core.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,8 +33,9 @@ namespace Aviate.API.Controllers.Admin
         {
             var UserId = GetUserId();
             var newRequest = new BookingCreateDto(UserId, request.FlightId, request.SeatId);
-            var bookings = await _bookingService.CreateAsync(newRequest);
-            return Ok(bookings);
+            await _bookingService.CreateAsync(newRequest);
+            return Ok(new ApiResponse("Booking successfully created"));
+
         }
 
         /// <summary>Оплатити бронювання</summary>
@@ -62,15 +64,15 @@ namespace Aviate.API.Controllers.Admin
         }
 
         [HttpGet("my")]
-        public async Task<IActionResult> GetMyBookings()
+        public async Task<IActionResult> GetMyBookings([FromQuery] BookingUserFilter filter)
         {
             var UserId = GetUserId();
-            var bookings = await _bookingService.GetByUserIdAsync(UserId);
+            var _filter = _mapper.Map<BookingAdminFilter>(filter);
+            _filter.UserId = UserId;
 
-            var response = _mapper.Map<List<GetBookingResponse>>(bookings);
+            var bookings = await _bookingService.GetFilteredAsync(_filter);
+            var response = _mapper.Map<PagedResultResponse<GetBookingResponse>>(bookings);
             return Ok(response);
-
-
         }
 
         private Guid GetUserId()

@@ -9,19 +9,19 @@ using Aviate.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Aviate.API.Controllers.Admin
+namespace Aviate.API.Controllers
 {
-    // ================= ADMIN-SEATS =================
-    [Route("api/admin/seats")]
+    // ================= SEATS =================
+    [Route("api/seats")]
     [ApiController]
 
-    [Authorize(Policy = "AdminPolicy")]
-    public class AdminSeatsController : ControllerBase
+    [Authorize(Policy = "UserPolicy")]
+    public class SeatsController : ControllerBase
     {
         private readonly ISeatService _seatService;
         private readonly IMapper _mapper;
 
-        public AdminSeatsController(ISeatService seatsService, IMapper mapper)
+        public SeatsController(ISeatService seatsService, IMapper mapper)
         {
             _seatService = seatsService;
             _mapper = mapper;

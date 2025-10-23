@@ -39,7 +39,7 @@ namespace Aviate.API.Controllers.Admin
 
         /// <summary>Отримати бронювання за фільтром</summary>
         [HttpGet]
-        public async Task<IActionResult> GetFiltered([FromQuery] BookingFilter filter)
+        public async Task<IActionResult> GetFiltered([FromQuery] BookingAdminFilter filter)
         {
             var bookings = await _bookingService.GetFilteredAsync(filter);
             var response = _mapper.Map<PagedResultResponse<GetBookingResponse>>(bookings);

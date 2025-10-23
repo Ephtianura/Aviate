@@ -9,7 +9,6 @@ namespace Aviate.Application.Validation.BookingValidator
         {
             RuleFor(x => x.UserId).NotEmpty().WithMessage("UserId is required");
             RuleFor(x => x.FlightId).NotEmpty().WithMessage("FlightId is required");
-            RuleFor(x => x.SeatId).NotEmpty().WithMessage("SeatId is required");
         }
     }
 }

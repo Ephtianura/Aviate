@@ -11,7 +11,7 @@ namespace Aviate.Application.Contracts
         Task<Booking> GetByIdAsync(Guid id);
         Task<Booking> CreateAsync(BookingCreateDto request);
         Task<List<Booking>> GetByUserIdAsync(Guid userId);
-        Task<PagedResult<Booking>> GetFilteredAsync(BookingFilter filter);
+        Task<PagedResult<Booking>> GetFilteredAsync(BookingAdminFilter filter);
         Task<PaymentResult> PayBookingAsync(Guid userId, Guid bookingId, PaymentMethod paymentMethod);
         Task CancelBookingAsync(Guid userId, Guid bookingId);
         Task DeleteAsync(Guid id);

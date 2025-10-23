@@ -30,7 +30,7 @@ namespace Aviate.DataAccess.Repositories
                 .Include(b => b.Seat)
                 .ToListAsync();
 
-        public async Task<PagedResult<Booking>> GetFilteredAsync(BookingFilter filter)
+        public async Task<PagedResult<Booking>> GetFilteredAsync(BookingAdminFilter filter)
         {
             var query = _dbContext.Bookings
                 .Include(b => b.User)

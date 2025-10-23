@@ -32,7 +32,7 @@ namespace Aviate.API.Controllers
             var user = await _userService.GetByIdAsync(userId);
 
             //Перевірка на адміна
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole("Admin") || User.IsInRole("Employee"))
             {
                 var responseAdmin = _mapper.Map<GetUserAdminResponse>(user);
                 return Ok(responseAdmin);

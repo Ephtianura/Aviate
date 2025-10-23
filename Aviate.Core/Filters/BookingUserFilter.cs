@@ -3,9 +3,8 @@
 namespace Aviate.Core.Filters
 {
     // ================= BOOKING =================
-    public class BookingFilter
+    public class BookingUserFilter
     {
-        public Guid? UserId { get; set; }                // Фільтр за користувачем
         public Guid? FlightId { get; set; }              // Фільтр за рейсом
         public BookingStatus? Status { get; set; }       // Pending, Confirmed, Canceled, тощо
         public decimal? MinTotalPrice { get; set; }

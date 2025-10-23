@@ -21,7 +21,7 @@ namespace Aviate.Application.Services
         private readonly IPaymentService _paymentService;
         private readonly IValidator<BookingCreateDto> _createValidator;
         //private readonly IValidator<BookingUpdateDto> _updateValidator;
-        private readonly IValidator<BookingFilter> _filterValidator;
+        private readonly IValidator<BookingAdminFilter> _filterValidator;
 
 
         public BookingService
@@ -33,7 +33,7 @@ namespace Aviate.Application.Services
             IPaymentService paymentService,
             IValidator<BookingCreateDto> createValidator,
             //IValidator<BookingUpdateDto> updateValidator,
-            IValidator<BookingFilter> filterValidator
+            IValidator<BookingAdminFilter> filterValidator
             )
         {
             _bookings = bookings;
@@ -60,7 +60,7 @@ namespace Aviate.Application.Services
         }
 
         // Отримати бронюванняи за фільтром (для адміна)
-        public async Task<PagedResult<Booking>> GetFilteredAsync(BookingFilter filter)
+        public async Task<PagedResult<Booking>> GetFilteredAsync(BookingAdminFilter filter)
         {
             // Валідація фільтра
             //await _filterValidator.ValidateAndThrowAsync(filter);

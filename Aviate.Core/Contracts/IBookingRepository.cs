@@ -9,7 +9,7 @@ namespace Aviate.DataAccess.Repositories
         Task DeleteAsync(Booking booking);
         Task<Booking?> GetByIdAsync(Guid id);
         Task<List<Booking>> GetByUserIdAsync(Guid userId);
-        Task<PagedResult<Booking>> GetFilteredAsync(BookingFilter filter);
+        Task<PagedResult<Booking>> GetFilteredAsync(BookingAdminFilter filter);
         Task UpdateAsync(Booking booking);
     }
 }

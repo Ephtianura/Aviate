@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Aviate.Application.Validation.BookingValidator
 {
-    public class BookingFilterValidator : AbstractValidator<BookingFilter>
+    public class BookingFilterValidator : AbstractValidator<BookingAdminFilter>
     {
         public BookingFilterValidator()
         {

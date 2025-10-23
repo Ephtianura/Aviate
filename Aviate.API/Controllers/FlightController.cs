@@ -16,8 +16,7 @@ namespace Aviate.API.Controllers.Admin
     // ================= FLIGHT =================
     [Route("api/flights")]
     [ApiController]
-
-    [Authorize(Policy = "UserPolicy")]
+    [AllowAnonymous]
     public class FlightsController : ControllerBase
     {
         private readonly IFlightService _flightService;
