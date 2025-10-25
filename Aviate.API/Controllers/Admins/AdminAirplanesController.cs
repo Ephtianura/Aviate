@@ -52,6 +52,20 @@ namespace Aviate.API.Controllers.Admin
             return Ok(new ApiResponse("Airplane successfully created"));
         }
 
+        /// <summary>
+        /// УВАГА: ULTRA-LEGASY. Створює багато літаків за раз
+        /// </summary>
+        [HttpPost("batch")]
+        public async Task<IActionResult> CreateBatch([FromBody] List<AirplaneRequest> requests)
+        {
+            foreach (var request in requests)
+            {
+                await _airplaneService.CreateAsync(request);
+            }
+
+            return Ok(new ApiResponse("Airplanes successfully created"));
+        }
+
         /// <summary>Оновити літак</summary>
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] AirplaneUpdateDto dto)

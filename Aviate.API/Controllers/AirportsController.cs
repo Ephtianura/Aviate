@@ -15,12 +15,12 @@ namespace Aviate.API.Controllers
     [ApiController]
 
     [Authorize(Policy = "UserPolicy")]
-    public class AirtportsController : ControllerBase
+    public class AirportsController : ControllerBase
     {
         private readonly IAirportService _airportsService;
         private readonly IMapper _mapper;
 
-        public AirtportsController(IAirportService airportsService, IMapper mapper)
+        public AirportsController(IAirportService airportsService, IMapper mapper)
         {
             _airportsService = airportsService;
             _mapper = mapper;

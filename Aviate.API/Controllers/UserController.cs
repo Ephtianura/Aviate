@@ -4,8 +4,10 @@ using Aviate.API.Dto.User;
 using Aviate.Application.Contracts;
 using Aviate.Application.Dto.User;
 using Aviate.Application.Exceptions;
+using Aviate.Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Aviate.API.Controllers
 {
@@ -32,7 +34,7 @@ namespace Aviate.API.Controllers
             var user = await _userService.GetByIdAsync(userId);
 
             //Перевірка на адміна
-            if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+            if (user.Role == UserRole.Admin || user.Role == UserRole.Employee)
             {
                 var responseAdmin = _mapper.Map<GetUserAdminResponse>(user);
                 return Ok(responseAdmin);
@@ -43,6 +45,7 @@ namespace Aviate.API.Controllers
         }
 
         [Authorize(Policy = "UserPolicy")]
+
         /// <summary>Оновити профіль</summary>
         [HttpPut("UpdateProfile")]
         public async Task<IActionResult> Update([FromBody] UserUpdateDto dto)
@@ -61,7 +64,7 @@ namespace Aviate.API.Controllers
             if (string.IsNullOrEmpty(userIdClaim))
                 throw new MissingUserIdClaimException();
             if (!Guid.TryParse(userIdClaim, out Guid userId))
-                throw new InvalidUserIdFormatException();           
+                throw new InvalidUserIdFormatException();
 
             return userId;
         }

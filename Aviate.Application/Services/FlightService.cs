@@ -121,8 +121,89 @@ namespace Aviate.Application.Services
             );
 
             await _flights.AddAsync(flight);
-            
+
             return flight;
+        }
+
+        public async Task CreateBatchAsync(List<FlightCreateDto> requests)
+        {
+            var airplanesResult = await _airplanes.GetFilteredAsync(new Core.Filters.AirplaneFilter()
+            {
+                Page = 1,
+                PageSize = 99999
+            });
+            var airplanes = airplanesResult.Items;
+
+            var airportsResult = await _airports.GetFilteredAsync(new Core.Filters.AirportFilter()
+            {
+                Page = 1,
+                PageSize = 99999
+            });
+
+            var airports = airportsResult.Items;
+
+            var airplaneMap = airplanes.ToDictionary(x => x.Id);
+            var airportMap = airports.ToDictionary(x => x.Id);
+
+            var flights = new List<Flight>();
+
+            foreach (var r in requests)
+            {
+                var airplane = airplaneMap[r.AirplaneId];
+                var dep = airportMap[r.DepartureAirportId];
+                var arr = airportMap[r.ArrivalAirportId];
+
+                var totalSeats = r.EconomySeats + r.BusinessSeats + r.FirstClassSeats;
+
+                if (airplane.Capacity < totalSeats)
+                    continue;
+
+                flights.Add(CreateFast(
+                    airplane,
+                    dep,
+                    arr,
+                    r.BasePrice,
+                    r.DepartureTime,
+                    r.ArrivalTime,
+                    r.EconomySeats,
+                    r.BusinessSeats,
+                    r.FirstClassSeats
+                ));
+            }
+
+            await _flights.AddRangeFastAsync(flights);
+        }
+
+        public Flight CreateFast(
+            Airplane airplane,
+            Airport departure,
+            Airport arrival,
+            decimal basePrice,
+            DateTimeOffset departureTime,
+            DateTimeOffset arrivalTime,
+            int economy,
+            int business,
+            int first)
+        {
+             int _counter = 0;
+        var flightNumber = GenerateFlightNumber(
+                airplane.Id,
+                departure.Id,
+                arrival.Id,
+                departureTime);
+
+            return Flight.Create(
+                airplane,
+                departure,
+                arrival,
+                flightNumber,
+                basePrice,
+                departureTime,
+                arrivalTime,
+                economy,
+                business,
+                first
+            );
         }
 
         // Оновити рейс
@@ -225,13 +306,13 @@ namespace Aviate.Application.Services
         {
             airlineCode = airlineCode.ToUpperInvariant();
 
-            var input = $"{airlineCode}-{airplaneId}-{departureAirportId}-{arrivalAirportId}-{departureTime:yyyyMMddHHmm}";
+            var input = $"{airlineCode}-{airplaneId}-{departureAirportId}-{arrivalAirportId}-{departureTime:yyyyMMddHHmm}-{departureTime:O}-{Guid.NewGuid():N}";
 
             using var sha = SHA256.Create();
             var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(input));
 
-            var number = BitConverter.ToUInt32(hash, 0) % 1_000_000;
-            var numberPart = number.ToString("D6");
+            var number = BitConverter.ToUInt32(hash, 0);
+            var numberPart = number.ToString("D10");
 
             return $"{airlineCode}{numberPart}";
         }

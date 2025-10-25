@@ -12,7 +12,6 @@ services:
     volumes:
       - aviateapi_postgres_data_new:/var/lib/postgresql/data
 
-
   api:
     build:
       context: .
@@ -25,18 +24,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=Aviate;Username=postgres;Password=54321
-
-  #  Фронт
-  # frontend:
-  #   container_name: frontend_aviate
-  #   build:
-  #     context: ./Aviate.Frontend/aviate
-  #     target: prod
-  #   ports:
-  #     - "3004:3004"
-  #   volumes:
-  #     - ./Aviate.Frontend/aviate:/app:cached
-  #     - /app/node_modules
 
   frontend:
     container_name: frontend_aviate

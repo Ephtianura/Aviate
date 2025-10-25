@@ -44,7 +44,7 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<BookingProfile>();
 });
 
-    
+
 var configuration = builder.Configuration;
 
 builder.Services.AddDbContext<AviateDbContext>(
@@ -71,6 +71,8 @@ builder.Services.AddScoped<ISeatService, SeatService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 
+builder.Services.AddScoped<IDegenerateService, DegenerateService>();
+
 // DI Infrastructure
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
@@ -94,14 +96,27 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy => policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:3004")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials());
 
 });
+
+
+
 // Створення додатку
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AviateDbContext>();
+    db.Database.Migrate();
+}
+
+
+
 
 // Свагер
 if (app.Environment.IsDevelopment())
@@ -110,21 +125,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(builder =>
-    builder
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials()
-        .WithOrigins("http://localhost:3000")
-);
-
 app.UseCors("AllowFrontend");
-app.UseCors("AllowLocalhost");
 
 // Параметри кукі
 app.UseCookiePolicy(new CookiePolicyOptions
 {
-    MinimumSameSitePolicy = SameSiteMode.Strict,
+    MinimumSameSitePolicy = SameSiteMode.None,
     HttpOnly = HttpOnlyPolicy.Always,
     Secure = CookieSecurePolicy.Always,
 });

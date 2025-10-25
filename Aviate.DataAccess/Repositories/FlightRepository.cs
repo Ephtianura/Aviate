@@ -116,6 +116,12 @@ namespace Aviate.DataAccess.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task AddRangeFastAsync(List<Flight> flights)
+        {
+            await _dbContext.Flights.AddRangeAsync(flights);
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task UpdateAsync(Flight flight)
         {
             _dbContext.Flights.Update(flight);

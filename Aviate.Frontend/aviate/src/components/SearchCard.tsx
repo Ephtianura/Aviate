@@ -139,9 +139,11 @@ export default function SearchCard() {
   return (
     <div className="bg-primary w-full py-4">
       <div className="flex mx-auto px-4 py-2 justify-center">
-        <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row gap-2">
+
           {/* Inputs */}
-          <div className="flex gap-0.5 flex-1 rounded-xl shadow-[0_0_25px_rgba(0,0,0,0.3)]">
+          <div className="flex flex-col md:flex-row gap-1 md:gap-0.5 flex-1 rounded-xl shadow-[0_0_25px_rgba(0,0,0,0.3)]">
+
             {/* Звідки */}
             <div className="relative flex-1" ref={fromRef}>
               <input
@@ -166,7 +168,7 @@ export default function SearchCard() {
                         setFromAirports([]);
                       }}
                     >
-                       <div className="flex flex-col">
+                      <div className="flex flex-col">
                         <div className="flex gap-2">
                           <div className="">{airport.city}</div>
                           <div className="text-gray-text">{airport.code}</div>
@@ -225,6 +227,7 @@ export default function SearchCard() {
               )}
             </div>
 
+
             {/* Дата в одну сторону */}
             <div className="relative">
               <DatePicker
@@ -238,7 +241,7 @@ export default function SearchCard() {
                   <div className="flex flex-col items-center">
                     <span>{day}</span>
                     <span className="text-xs text-primary-green">
-                      {price ? `${price}₴` : "100₴"}
+                      {price ? `${price}₴` : "Невідомо"}
                     </span>
                   </div>
                 )}
@@ -271,6 +274,7 @@ export default function SearchCard() {
               </div>
             </div>
           </div>
+
 
           {/* Кнопка */}
           <button

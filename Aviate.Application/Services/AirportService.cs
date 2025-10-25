@@ -54,9 +54,10 @@ namespace Aviate.Application.Services
             // Перевірка чи нема такого самого аеропорта
             var existing = await _airports.GetByCode(request.Code.Trim().ToUpperInvariant());
             if (existing != null)
-                throw new EntityAlreadyExistsException("Airport", request.Code);
+                return existing;
+                //throw new EntityAlreadyExistsException("Airport", request.Code);
 
-            // Створення літака
+                // Створення літака
             var airport = Airport.Create(
                 request.Name,
                 request.Code,

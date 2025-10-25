@@ -77,7 +77,7 @@ export default function FlightsPage() {
     }, [departureId, arrivalId]);
 
 
-    if (loading) return <div>Загрузка рейсов...</div>;
+    if (loading) return <div>Загрузка рейсів...</div>;
 
     const firstFlight = flights[0];
     const fromCity = firstFlight?.departureAirport?.city;
@@ -89,15 +89,15 @@ export default function FlightsPage() {
                 <SearchCard />
             </div>
             <div className="flex justify-center ">
-                <div className="w-full max-w-7xl p-10 mx-4 flex gap-10 items-start ">
+                <div className="w-full max-w-7xl p-10 mx-4 flex flex-col lg:flex-row gap-10 items-start ">
 
                     <FlightSidebar from={fromCity} to={toCity} />
 
-                    <div className="flex flex-col gap-14 w-210">
+                    <div className="flex flex-col gap-14 w-full">
 
                         {/* НАЙДЕШЕВШІ */}
                         <WhiteCard>
-                            <div className="flex flex-col gap-6">
+                            <div className="flex flex-col gap-6 w-full">
                                 <h2 className="text-primary-black text-2xl font-bold">
                                     Найдешевші авіаквитки
                                 </h2>
@@ -132,7 +132,7 @@ export default function FlightsPage() {
                                             flights.map(flight => (
                                                 <div
                                                     key={flight.id}
-                                                    className="flex-shrink-0 w-[300px] cursor-pointer"
+                                                    className="flex-shrink-0 flex-shrink-0 cursor-pointer"
                                                     onClick={() => setSelectedFlight(flight)} // клик открывает модалку
                                                 >
                                                     <FlightCard flight={flight} />

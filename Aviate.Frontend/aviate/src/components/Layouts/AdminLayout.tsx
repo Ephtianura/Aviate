@@ -37,7 +37,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex justify-center">
-      <div className="w-full max-w-7xl p-10 mx-4 flex gap-10 items-start">
+      <div className="w-full max-w-7xl p-10 mx-4 flex flex-col sm:flex-row gap-10 items-start">
         <AdminSidebar />
         <div className="w-full">{children}</div>
       </div>

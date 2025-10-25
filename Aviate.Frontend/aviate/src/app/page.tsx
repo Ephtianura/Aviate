@@ -1,16 +1,8 @@
-"use client";
-import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
 import SearchCard from "@/components/SearchCard";
-import WhiteCard from "@/components/Cards/WhiteCard";
 import HotFlights from "@/components/HotFlights";
 import { SpotCard } from "@/components/Cards/SpotCard";
 
-
-
 export default function HomePage() {
-  const { isLoggedIn } = useAuth();
-
 
   return (
     <div className="">
@@ -22,22 +14,25 @@ export default function HomePage() {
           </h1>
         </div>
 
-
         <div className=" sticky top-16 z-10">
           <SearchCard />
         </div>
         <div className=" bg-primary h-[220px]"> </div>
 
-
         <div className="flex justify-center items-center -mt-[150px]">
-          <div className="container px-90 grid grid-cols-2 gap-x-6 gap-y-12 justify-center items-center">
-            <HotFlights />
-            <SpotCard
-              city="Тбілісі"
-              title="Фортеця Нарікала"
-              image="/images/tbilisi-narikala.jpg"
-              description="Висока, красива та неприступна фортеця, пов’язана з історією міста. У спекотну погоду піднімайтеся канатною дорогою від парку Ріке та зустрічайте захід сонця на стінах."
-            />
+          <div className="container max-w-4xl grid grid-cols-2 gap-x-6 gap-y-12 justify-center items-center">
+
+            <div className="col-span-2 sm:col-span-1">
+              <HotFlights />
+            </div>
+            <div className="col-span-2 sm:col-span-1">
+              <SpotCard
+                city="Тбілісі"
+                title="Фортеця Нарікала"
+                image="/images/tbilisi-narikala.jpg"
+                description="Висока, красива та неприступна фортеця, пов’язана з історією міста. У спекотну погоду піднімайтеся канатною дорогою від парку Ріке та зустрічайте захід сонця на стінах."
+              />
+            </div>
 
             <div className="col-span-2 ">
               <SpotCard

@@ -81,25 +81,26 @@ export default function Navbar() {
                 alt="Aviate Logo"
                 className="w-5 h-5"
               />
-              Aviate
+
+              <span className="hidden sm:block">Aviate</span>
             </Link>
           </div>
         </div>
-
+              
         {/* Колонка 2 - Панель навігації */}
         <div className="flex justify-center gap-4 ">
 
           <div className="flex gap-2 bg-btn-no-active rounded-[10px] h-10 p-1 text-primary-light text-md font-bold ">
 
             <Link href="/"
-              className="flex items-center hover:bg-btn-hover rounded-[10px] 
+              className="hidden sm:flex items-center hover:bg-btn-hover rounded-[10px] 
                   px-2 transition-colors duration-300 active:bg-white active:text-primary-black 
                   active:duration-10">
 
               Авіаквитки
             </Link>
 
-            <Link href="/my/bookings" className="flex items-center hover:bg-btn-hover rounded-[10px] px-2 transition-colors duration-300 active:bg-white active:text-primary-black active:duration-10">
+            <Link href="/my/bookings" className="hidden sm:flex items-center hover:bg-btn-hover rounded-[10px] px-2 transition-colors duration-300 active:bg-white active:text-primary-black active:duration-10">
               <p>Мої бронювання</p>
             </Link>
 
@@ -108,7 +109,8 @@ export default function Navbar() {
                 href="/admin/dashboard"
                 className="flex items-center hover:bg-btn-hover rounded-[10px] px-2 transition-colors duration-300 active:bg-white active:text-primary-black active:duration-10"
               >
-                <p>Адмін панель</p>
+                <span className="sm:hidden">Адмінка</span>
+                <span className="hidden sm:block">Адмін панель</span>
               </Link>
             )}
 
@@ -139,7 +141,7 @@ export default function Navbar() {
               ) : (
                 <FiUser className="text-white w-5 h-5" />
               )}
-              <p className="text-white">Профіль</p>
+              <p className="text-white hidden sm:block">Профіль</p>
             </div>
 
             <ProfileModal
@@ -152,7 +154,7 @@ export default function Navbar() {
           </div>
 
           {/* Підтримка */}
-          <a href="/" className="flex items-center gap-1 hover:bg-btn-primary-hover transition-colors duration-300 rounded-[10px] px-3 py-2">
+          <a href="/" className="hidden md:flex items-center gap-1 hover:bg-btn-primary-hover transition-colors duration-300 rounded-[10px] px-3 py-2">
             <RiQuestionnaireFill className="text-white w-5 h-5" />
             <p className="">
               Підтримка

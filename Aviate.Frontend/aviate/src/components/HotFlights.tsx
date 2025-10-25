@@ -20,31 +20,30 @@ export default function HotFlights() {
         scrollRef.current.scrollBy({ left: direction === "left" ? -scrollAmount : scrollAmount, behavior: "smooth" });
     };
 
-   useEffect(() => {
-    const fetchFlights = async () => {
-        setLoading(true);
-        try {
-            const params = new URLSearchParams();
-            params.append("SortBy", "basePrice");
-            params.append("SortDesc", "false"); // по возрастанию
-            params.append("Page", "1");         // первая страница
-            params.append("PageSize", "5");     // количество билетов на странице
+    useEffect(() => {
+        const fetchFlights = async () => {
+            setLoading(true);
+            try {
+                const params = new URLSearchParams();
+                params.append("SortBy", "basePrice");
+                params.append("SortDesc", "false"); // по возрастанию
+                params.append("Page", "1");         // первая страница
+                params.append("PageSize", "5");     // количество билетов на странице
 
-            const data = await apiFetch(`/flights?${params.toString()}`);
-            setFlights(data.items || []);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoading(false);
-        }
-    };
+                const data = await apiFetch(`/flights?${params.toString()}`);
+                setFlights(data.items || []);
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    fetchFlights();
-}, []);
+        fetchFlights();
+    }, []);
 
 
     if (loading) return <div className="text-white text-xl">Завантаження гарячих квитків...</div>;
-    if (flights.length === 0) return <div className="text-white text-xl">Гарячих квитків не знайдено</div>;
 
     return (
         <div className="p-6 rounded-2xl shadow-md bg-[#FA742D]" >
@@ -60,7 +59,7 @@ export default function HotFlights() {
                     </div>
 
                     <div className="my-auto mx-auto">
-                        <BsFire className="w-25 h-25 text-white"/>
+                        <BsFire className="w-25 h-25 text-white" />
                     </div>
                 </div>
 
@@ -83,16 +82,21 @@ export default function HotFlights() {
                     </button>
 
                     {/* Список рейсов */}
-                    <div
-                        ref={scrollRef}
-                        className="flex gap-30 overflow-x-auto px-10 py-2 flex-nowrap scrollbar-hide"
-                    >
-                        {flights.map(flight => (
-                            <div key={flight.id} className="flex-shrink-0 w-[300px]">
-                                <FlightCard flight={flight} bgColor="bg-white" />
-                            </div>
-                        ))}
-                    </div>
+
+                    {flights.length > 0 ? (
+                        <div
+                            ref={scrollRef}
+                            className="flex gap-30 overflow-x-auto px-10 py-2 flex-nowrap scrollbar-hide"
+                        >
+                            {flights.map(flight => (
+                                <div key={flight.id} className="flex-shrink-0 w-[300px]">
+                                    <FlightCard flight={flight} bgColor="bg-white" />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className=" px-10 py-2 text-white text-xl">Гарячих квитків не знайдено</div>
+                    )}
                 </div>
             </div>
         </div>

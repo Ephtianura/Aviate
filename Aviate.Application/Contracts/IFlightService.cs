@@ -11,5 +11,6 @@ namespace Aviate.Application.Services
         Task<Flight> GetByIdAsync(Guid id);
         Task<PagedResult<Flight>> GetFilteredAsync(FlightFilter filter);
         Task UpdateAsync(Guid id, FlightUpdateDto request);
+        Task CreateBatchAsync(List<FlightCreateDto> requests);
     }
 }

@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
 using System.Text;
 using System.Security.Claims;
-using Aviate.Infrastructure.Auth;
 using Aviate.Application.Contracts;
 
 namespace Aviate.Infrastructure.Auth

@@ -1,10 +1,8 @@
 ﻿using Aviate.API.Dto;
-using Aviate.API.Extensions;
 using Aviate.Application.Contracts;
 using Aviate.Application.Dto.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Aviate.API.Controllers
 {

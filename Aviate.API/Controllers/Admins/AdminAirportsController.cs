@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Aviate.API.Dto;
-using Aviate.API.Dto.Admin;
 using Aviate.API.Dto.User;
 using Aviate.Application.Contracts;
 using Aviate.Application.Dto.Airport;
@@ -50,6 +49,19 @@ namespace Aviate.API.Controllers.Admin
         {
             var airports = await _airportsService.CreateAsync(request);
             return Ok(new ApiResponse("Airport successfully created"));
+        }
+
+        /// <summary>
+        /// УВАГА: ULTRA-LEGASY. Створює багато аеропортів за раз
+        /// </summary>
+        [HttpPost("batch")]
+        public async Task<IActionResult> CreateBatch([FromBody] List<AirportCreateDto> requests)
+        {
+            foreach (var request in requests)
+            {
+                await _airportsService.CreateAsync(request);
+            }
+            return Ok(new ApiResponse("Airports successfully created"));
         }
 
         /// <summary>Оновити аеропорт</summary>

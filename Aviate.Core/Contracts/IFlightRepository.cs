@@ -16,5 +16,6 @@ namespace Aviate.DataAccess.Repositories
         Task UpdateAsync(Flight flight);
         Task AddAsync(Flight flight);
         Task DeleteAsync(Flight flight);
+        Task AddRangeFastAsync(List<Flight> flights);
     }
 }

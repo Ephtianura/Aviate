@@ -109,7 +109,7 @@ export default function PriceChart({ data }: PriceChartProps) {
 
                             {/* Колонка */}
                             <div
-                                className={`${bgColor} w-10 rounded-t-md transition-all duration-300`}
+                                className={`${bgColor} w-full max-w-10 rounded-t-md transition-all duration-300`}
                                 style={{ height: `${barHeightPx}px` }}
                             ></div>
 
