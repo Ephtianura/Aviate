@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import WhiteCard from "../Cards/WhiteCard";
 import { IoTimeOutline } from "react-icons/io5";
 import Seat from "../Seat";
@@ -13,6 +13,8 @@ interface FlightBookingModalProps {
     onError: (msg: string) => void;
 }
 
+type SortField = "class" | "isBooked";
+
 export default function FlightBookingModal({
     flight,
     onClose,
@@ -20,18 +22,21 @@ export default function FlightBookingModal({
     onError
 }: FlightBookingModalProps) {
 
-
     const [seats, setSeats] = useState<any[]>([]);
     const [selectedSeat, setSelectedSeat] = useState<any | null>(null);
-    const [sortBy, setSortBy] = useState<"Class" | "IsBooked">("Class");
+
+    const [selectedClass, setSelectedClass] = useState<string>("all");
+    const [sortBy, setSortBy] = useState<SortField>("class");
     const [sortDesc, setSortDesc] = useState(false);
+
     const [isBooking, setIsBooking] = useState(false);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const dep = flight.departureAirport;
     const arr = flight.arrivalAirport;
+
     const departureTime = new Date(flight.departureTime);
     const arrivalTime = new Date(flight.arrivalTime);
+
     const diffMs = arrivalTime.getTime() - departureTime.getTime();
     const hours = Math.floor(diffMs / (1000 * 60 * 60));
     const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
@@ -50,8 +55,36 @@ export default function FlightBookingModal({
                 console.error(err);
             }
         };
+
         fetchSeats();
-    }, [flight.id, flight.totalSeats]);
+    }, [flight.id]);
+
+    const seatClasses = useMemo(() => {
+        return Array.from(new Set(seats.map(s => s.class)));
+    }, [seats]);
+
+    const filteredSeats = useMemo(() => {
+        if (selectedClass === "all") return seats;
+        return seats.filter(s => s.class === selectedClass);
+    }, [seats, selectedClass]);
+
+    const sortedSeats = useMemo(() => {
+        const copy = [...filteredSeats];
+
+        return copy.sort((a, b) => {
+            let res = 0;
+
+            if (sortBy === "class") {
+                res = a.class.localeCompare(b.class);
+            }
+
+            if (sortBy === "isBooked") {
+                res = (a.isBooked === b.isBooked ? 0 : a.isBooked ? 1 : -1);
+            }
+
+            return sortDesc ? -res : res;
+        });
+    }, [filteredSeats, sortBy, sortDesc]);
 
     const handleSelectSeat = (seat: any) => {
         if (selectedSeat?.id === seat.id) {
@@ -68,79 +101,84 @@ export default function FlightBookingModal({
         return flight.basePrice;
     };
 
-    const sortedSeats = [...seats].sort((a, b) => {
-        let res = 0;
-        if (sortBy === "Class") res = a.class.localeCompare(b.class);
-        if (sortBy === "IsBooked") res = (a.isBooked === b.isBooked ? 0 : a.isBooked ? 1 : -1);
-        return sortDesc ? -res : res;
-    });
-
     const bookSeat = async () => {
-    setIsBooking(true);
-    try {
-        const body: any = {
-            flightId: flight.id,
-        };
+        setIsBooking(true);
+        try {
+            const body: any = { flightId: flight.id };
 
-        // seatId только если выбрано место
-        if (selectedSeat !== null) {
-            body.seatId = selectedSeat.id;
+            if (selectedSeat) {
+                body.seatId = selectedSeat.id;
+            }
+
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/bookings/create`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify(body),
+                }
+            );
+
+            if (!res.ok) {
+                let errorMsg = "Помилка бронювання";
+
+                try {
+                    const errJson = await res.json();
+                    if (errJson?.error) errorMsg = errJson.error;
+                } catch { }
+
+                throw new Error(errorMsg);
+            }
+
+            onSuccess("Бронювання успішно створене!");
+            onClose();
+
+        } catch (err: any) {
+            onError(`Помилка при бронюванні: ${err.message}`);
+        } finally {
+            setIsBooking(false);
         }
-
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/create`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify(body),
-        });
-
-        if (!res.ok) {
-            // пробуем распарсить JSON
-            let errorMsg = "Помилка бронювання";
-            try {
-                const errJson = await res.json();
-                if (errJson?.error) errorMsg = errJson.error;
-            } catch { }
-
-            throw new Error(errorMsg);
-        }
-
-        onSuccess("Бронювання успішно створене! Ви можете сплатити його у себе у профілі.");
-        onClose();
-
-    } catch (err: any) {
-        onError(`Помилка при бронюванні місця: ${err.message}`);
-    } finally {
-        setIsBooking(false);
-    }
-};
-
+    };
 
     return (
         <>
-            {/* Затемнение */}
             <div className="fixed inset-0 bg-black/20" onClick={onClose} />
 
-            {/* Модалка */}
             <div className="fixed inset-0 z-50 flex justify-center items-center p-4">
                 <WhiteCard>
-                    <div className="flex gap-10 min-w-[1100px] max-h-[50vh] overflow-y-auto ">
+                    <div className="flex gap-10 min-w-[1100px] max-h-[50vh] overflow-y-auto">
 
-                        {/* Левая часть - места */}
+                        {/* SEATS */}
                         <div className="flex-1 flex flex-col gap-4">
                             <div className="flex justify-between items-center mb-2">
-                                <h2 className="text-xl font-bold">За бажанням, ви можете обрати місце:</h2>
+                                <h2 className="text-xl font-bold">
+                                    Оберіть місце:
+                                </h2>
+
                                 <div className="flex gap-2">
                                     <select
-                                        value={sortBy}
-                                        onChange={(e) => setSortBy(e.target.value as any)}
+                                        value={selectedClass}
+                                        onChange={(e) => setSelectedClass(e.target.value)}
                                         className="border px-2 py-1 rounded"
                                     >
-                                        <option value="Class">Клас</option>
-                                        <option value="IsBooked">Заброньовано</option>
+                                        <option value="all">Всі класи</option>
+                                        {seatClasses.map(c => (
+                                            <option key={c} value={c}>{c}</option>
+                                        ))}
                                     </select>
+
+                                    <select
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value as SortField)}
+                                        className="border px-2 py-1 rounded"
+                                    >
+                                        <option value="class">Клас</option>
+                                        <option value="isBooked">Заброньовано</option>
+                                    </select>
+
                                     <button
-                                        onClick={() => setSortDesc(!sortDesc)}
+                                        onClick={() => setSortDesc(v => !v)}
                                         className="border px-2 py-1 rounded"
                                     >
                                         {sortDesc ? "▼" : "▲"}
@@ -148,20 +186,19 @@ export default function FlightBookingModal({
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-6 overflow-y-auto gap-y-8 ">
-                                {sortedSeats.map((seat) => (
+                            <div className="grid grid-cols-6 gap-y-8 overflow-y-auto">
+                                {sortedSeats.map(seat => (
                                     <Seat
                                         key={seat.id}
                                         seat={seat}
                                         selected={selectedSeat?.id === seat.id}
                                         onSelect={handleSelectSeat}
                                     />
-
                                 ))}
                             </div>
-
                         </div>
 
+                        {/* INFO */}
                         {/* Правая часть - информация о рейсе */}
                         <div className="w-120 flex-shrink-0 ">
                             <div className="flex justify-between items-center mb-2 ">
@@ -228,6 +265,7 @@ export default function FlightBookingModal({
                                 </button>
                             </div>
                         </div>
+
                     </div>
                 </WhiteCard>
             </div>

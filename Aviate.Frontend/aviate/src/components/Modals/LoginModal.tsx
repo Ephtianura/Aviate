@@ -9,7 +9,7 @@ import { IoMdClose } from "react-icons/io";
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSwitchToRegister: () => void; 
+  onSwitchToRegister: () => void;
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({
@@ -18,7 +18,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   onSwitchToRegister
 }) => {
   const router = useRouter();
-const { setIsLoggedIn, setUserRole, setUserName } = useAuth();
+  const { setIsLoggedIn, setUserRole, setUserName,  } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,8 +49,7 @@ const { setIsLoggedIn, setUserRole, setUserName } = useAuth();
       setIsLoggedIn(true);
       setUserRole(user.role || null);
       onClose();
-      router.refresh();
-      router.push("/");
+      window.location.href = "/";
     } catch (err: any) {
       setError(err?.data?.message || "Невідома помилка");
     } finally {

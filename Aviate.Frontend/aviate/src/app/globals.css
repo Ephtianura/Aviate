@@ -3,39 +3,37 @@
 @theme {
   /* Фоны */
   --color-bg-light: #f9fafb;
-  --color-bg: #EFF1F4;
+  --color-bg: #eff1f4;
 
   /* Текст */
   --foreground: #171717;
   --color-text: #1f2937;
 
   /* 🎨 Основные цвета темы  */
---color-primary: #feca0c;
---color-primary-light: #BCD5F8;
+  --color-primary: #108eee;
+  --color-primary-light: #bcd5f8;
 
---color-primary-black: #0C131D;
---color-primary-green: #3BBF56;
+  --color-primary-black: #0c131d;
+  --color-primary-green: #3bbf56;
 
---color-btn-no-active: #0D69E6;
---color-btn-hover: #1C78DF;
---color-btn-primary-hover: #237DFA ;
+  --color-btn-no-active: #0d69e6;
+  --color-btn-hover: #1c78df;
+  --color-btn-primary-hover: #237dfa;
 
---color-btn-grey: #1C78DF;
---color-btn-grey-hover: #EBECEE;
+  --color-btn-grey: #1c78df;
+  --color-btn-grey-hover: #ebecee;
 
-
-  --color-gray-text: #9EA9B7;
+  --color-gray-text: #9ea9b7;
   --color-gray-light: #9ca3af;
-  --color-gray-lightes: #EFF1F4;
-   --color-gray-very-light: #F8F8F8;
-
-
+  --color-gray-lightes: #eff1f4;
+  --color-gray-very-light: #f8f8f8;
 }
 
 @font-face {
   font-family: "Stapel";
-  src: url("https://…/Stapel.woff2") format("woff2"),
-       url("https://…/Stapel.woff") format("woff");
+  src:
+    url("https://…/Stapel.woff2") format("woff2"),
+    url("https://…/Stapel.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
@@ -45,38 +43,38 @@ body {
 
 :root {
   --color-bg-light: #f9fafb;
-  --color-bg: #EFF1F4;
+  --color-bg: #eff1f4;
 
   /* Текст */
   --foreground: #171717;
   --color-text: #1f2937;
---color-primary: #feca0c;
+  --color-primary: #108eee;
   /* 🎨 Основные цвета темы  */
---color-primary: #0C73FE;
---color-primary-light: #BCD5F8;
+  --color-primary-light: #bcd5f8;
 
---color-primary-black: #0C131D;
---color-primary-green: #3BBF56;
+  --color-primary-black: #0c131d;
+  --color-primary-green: #3bbf56;
 
---color-btn-no-active: #0D69E6;
---color-btn-hover: #1C78DF;
---color-btn-primary-hover: #237DFA ;
+  --color-btn-no-active: #287fef;
+  --color-btn-hover: #2373dc;
+  --color-btn-primary-hover: #237dfa;
 
---color-btn-grey: #1C78DF;
---color-btn-grey-hover: #EBECEE;
+  --color-btn-grey: #1c78df;
+  --color-btn-grey-hover: #ebecee;
 
-
-  --color-gray-text: #9EA9B7;
+  --color-gray-text: #9ea9b7;
   --color-gray-light: #9ca3af;
-  --color-gray-lightes: #EFF1F4;
-  
-   --color-gray-very-light: #F8F8F8;
-} 
+  --color-gray-lightes: #eff1f4;
+
+  --color-gray-very-light: #f8f8f8;
+}
 
 .react-datepicker__day {
   padding: 5px 28px 5px 28px;
   border-radius: 10px;
 }
 
-
-
+svg, svg * {
+  outline: none !important;
+  box-shadow: none !important;
+}

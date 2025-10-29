@@ -7,6 +7,7 @@ import FlightCard from "./Cards/FlightCard";
 import WhiteCard from "./Cards/WhiteCard";
 import { apiFetch } from "@/lib/api"; // твоя функция fetch
 import { BsFire } from "react-icons/bs";
+import Link from "next/link";
 
 export default function HotFlights() {
     const [flights, setFlights] = useState<any[]>([]);
@@ -46,7 +47,7 @@ export default function HotFlights() {
     if (loading) return <div className="text-white text-xl">Завантаження гарячих квитків...</div>;
 
     return (
-        <div className="p-6 rounded-2xl shadow-md bg-[#FA742D]" >
+        <div className="p-6 rounded-2xl shadow-md bg-gradient-to-r from-[#ff8c5a] via-[#ff6a5a] to-[#ff4b4b]" >
             <div className="flex flex-col gap-6 ">
                 <div className="grid grid-cols-2">
                     <div className="flex flex-col gap-2 ">
@@ -86,11 +87,13 @@ export default function HotFlights() {
                     {flights.length > 0 ? (
                         <div
                             ref={scrollRef}
-                            className="flex gap-30 overflow-x-auto px-10 py-2 flex-nowrap scrollbar-hide"
+                            className="flex gap-30 overflow-x-auto px-10 py-2 flex-nowrap scrollbar-hide items-center"
                         >
                             {flights.map(flight => (
-                                <div key={flight.id} className="flex-shrink-0 w-[300px]">
-                                    <FlightCard flight={flight} bgColor="bg-white" />
+                                <div key={flight.id} className="shrink-0 w-[300px]">
+                                    <Link href={`/flights?DepartureAirportId=${flight.departureAirportId}&ArrivalAirportId=${flight.arrivalAirportId}`}>
+                                        <FlightCard flight={flight} bgColor="bg-white" />
+                                    </Link>
                                 </div>
                             ))}
                         </div>

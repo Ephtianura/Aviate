@@ -26,7 +26,7 @@ export default function FlightCard({ flight, bgColor = "bg-gray-100", onClick }:
 
     return (
         <div
-            className={`p-6 rounded-2xl shadow-md w-100 cursor-pointer ${bgColor}`}
+            className={`p-6 rounded-2xl shadow-md w-100 cursor-pointer w-full ${bgColor}`}
             key={flight.id} onClick={onClick}
         >
             <div className="flex flex-col gap-2">

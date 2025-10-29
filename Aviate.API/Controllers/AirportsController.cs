@@ -13,8 +13,6 @@ namespace Aviate.API.Controllers
     // ================= AIRPORTS =================
     [Route("api/airports")]
     [ApiController]
-
-    [Authorize(Policy = "UserPolicy")]
     public class AirportsController : ControllerBase
     {
         private readonly IAirportService _airportsService;

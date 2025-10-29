@@ -33,7 +33,7 @@ export default function SearchCard() {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
-  const [price, setPrice] = useState<number | null>(100);
+  const [price, setPrice] = useState<number | null>(null);
 
   const fromRef = useRef<HTMLDivElement>(null);
   const toRef = useRef<HTMLDivElement>(null);
@@ -57,7 +57,7 @@ export default function SearchCard() {
   useEffect(() => {
     const fetchPrice = async () => {
       if (!selectedFrom || !selectedTo || !startDate) {
-        setPrice(100);
+        setPrice(null);
         return;
       }
       try {
@@ -137,7 +137,7 @@ export default function SearchCard() {
   }
 
   return (
-    <div className="bg-primary w-full py-4">
+    <div className=" w-full py-4 z-20">
       <div className="flex mx-auto px-4 py-2 justify-center">
         <div className="flex flex-col md:flex-row gap-2">
 
@@ -229,7 +229,7 @@ export default function SearchCard() {
 
 
             {/* Дата в одну сторону */}
-            <div className="relative">
+            <div className="relative z-20">
               <DatePicker
                 selected={startDate}
                 onChange={(date) => setStartDate(date)}
@@ -240,9 +240,7 @@ export default function SearchCard() {
                 renderDayContents={(day) => (
                   <div className="flex flex-col items-center">
                     <span>{day}</span>
-                    <span className="text-xs text-primary-green">
-                      {price ? `${price}₴` : "Невідомо"}
-                    </span>
+
                   </div>
                 )}
               />
@@ -252,7 +250,7 @@ export default function SearchCard() {
             </div>
 
             {/* Дата назад */}
-            <div className="relative">
+            <div className="relative z-20">
               <DatePicker
                 selected={endDate}
                 onChange={(date) => setEndDate(date)}
@@ -264,7 +262,7 @@ export default function SearchCard() {
                   <div className="flex flex-col items-center">
                     <span>{day}</span>
                     <span className="text-xs text-primary-green">
-                      {price ? `${price}₴` : "100₴"}
+                      {price ? `${price}₴` : ""}
                     </span>
                   </div>
                 )}
@@ -278,7 +276,7 @@ export default function SearchCard() {
 
           {/* Кнопка */}
           <button
-            className="bg-[#FA742D] shadow-[0_0_25px_rgba(0,0,0,.2)] rounded-xl px-10 py-3 text-white font-bold hover:bg-[#ED7332] active:bg-[#D3662D] transition-colors"
+            className="bg-[#FA742D] cursor-pointer shadow-[0_0_25px_rgba(0,0,0,.2)] z-20 rounded-xl px-10 py-3 text-white font-bold hover:bg-[#ED7332] active:bg-[#D3662D] transition-colors"
             onClick={handleSearchFlights}
           >
             Знайти квитки

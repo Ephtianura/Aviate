@@ -9,12 +9,11 @@ using Aviate.Core.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Aviate.API.Controllers.Admin
+namespace Aviate.API.Controllers
 {
     // ================= BOOKINGS =================
     [Route("api/bookings")]
     [ApiController]
-
     [Authorize(Policy = "UserPolicy")]
     public class BookingsController : ControllerBase
     {

@@ -5,14 +5,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { logout } from "@/lib/api";
 import { useState, useEffect, useRef } from "react";
-
 import { FiUser } from "react-icons/fi";
-import { } from "react-icons/bs";
-import { TbWorld } from "react-icons/tb";
 import { RiQuestionnaireFill } from "react-icons/ri";
-
 import { ProfileModal } from "./Modals/ProfileModal";
-
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -52,7 +47,7 @@ export default function Navbar() {
     } finally {
       setIsLoggedIn(false);
       setUserRole(null);
-      router.push("/");
+      window.location.href = "/";
     }
   };
 
@@ -63,15 +58,13 @@ export default function Navbar() {
   ];
 
 
-  if (!mounted) return null;
+  if (!mounted) return <nav className="bg-primary shadow-md sticky top-0 z-50 h-16"></nav>;
 
   return (
     <nav className="bg-primary shadow-md sticky top-0 z-50">
 
       {/* 3 колонки */}
-      <div className="grid grid-cols-[12%_55%_33%] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 items-center h-16 ">
-
-
+      <div className="flex justify-between  max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 items-center h-16 ">
         {/* Колонка 1 - Ім'я сайту */}
         <div className="">
           <div>
@@ -81,7 +74,6 @@ export default function Navbar() {
                 alt="Aviate Logo"
                 className="w-5 h-5"
               />
-
               <span className="hidden sm:block">Aviate</span>
             </Link>
           </div>
@@ -93,10 +85,9 @@ export default function Navbar() {
           <div className="flex gap-2 bg-btn-no-active rounded-[10px] h-10 p-1 text-primary-light text-md font-bold ">
 
             <Link href="/"
-              className="hidden sm:flex items-center hover:bg-btn-hover rounded-[10px] 
+              className="hidden md:flex items-center hover:bg-btn-hover rounded-[10px] 
                   px-2 transition-colors duration-300 active:bg-white active:text-primary-black 
                   active:duration-10">
-
               Авіаквитки
             </Link>
 
@@ -113,8 +104,6 @@ export default function Navbar() {
                 <span className="hidden sm:block">Адмін панель</span>
               </Link>
             )}
-
-
           </div>
         </div>
 

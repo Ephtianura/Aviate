@@ -11,7 +11,7 @@ interface FlightSidebarProps {
 
 export default function FlightSidebar({ from, to }: FlightSidebarProps) {
     return (
-        <div className="right-0 bg-white p-4 rounded-xl text-primary-black shadow-lg sticky">
+        <div className="hidden md:block right-0 bg-white p-4 rounded-xl text-primary-black shadow-lg sticky">
             <div className="p-2 flex gap-2 items-center">
                 <h1 className="font-bold text-xl">
                     {from && to ? `${from} — ${to}` : "Маршрут не знайдено"}

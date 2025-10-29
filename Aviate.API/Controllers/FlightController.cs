@@ -1,17 +1,13 @@
 ﻿using AutoMapper;
 using Aviate.API.Dto;
-using Aviate.API.Dto.Admin;
 using Aviate.API.Dto.User.Booking;
 using Aviate.API.Dto.User.Flight;
-using Aviate.Application.Contracts;
-using Aviate.Application.Dto.Flight;
 using Aviate.Application.Services;
 using Aviate.Core.Filters;
-using Aviate.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Aviate.API.Controllers.Admin
+namespace Aviate.API.Controllers
 {
     // ================= FLIGHT =================
     [Route("api/flights")]

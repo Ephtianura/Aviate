@@ -72,7 +72,7 @@ namespace Aviate.Application.Services
 
 
             // Перевірка чи не занятий літак
-            var airplaneConflict = await _flights.ExistsForAirplaneAtTimeAsync(request.AirplaneId, request.DepartureTime);
+            var airplaneConflict = await _flights.ExistsForAirplaneAtTimeAsync(request.AirplaneId, request.DepartureTime.ToUniversalTime());
             if (airplaneConflict)
                 throw new FlightConflictException("This airplane already has a flight at the same departure time.");
 
@@ -81,7 +81,7 @@ namespace Aviate.Application.Services
                     request.AirplaneId,
                     request.DepartureAirportId,
                     request.ArrivalAirportId,
-                    request.DepartureTime
+                    request.DepartureTime.ToUniversalTime()
                 );
             if (routeConflict)
                 throw new FlightConflictException("A flight for this route already exists at the same time.");
@@ -112,8 +112,8 @@ namespace Aviate.Application.Services
                 flightNumber,
                 request.BasePrice,
 
-                request.DepartureTime,
-                request.ArrivalTime,
+                request.DepartureTime.ToUniversalTime(),
+                request.ArrivalTime.ToUniversalTime(),
 
                 request.EconomySeats,
                 request.BusinessSeats,
@@ -254,11 +254,11 @@ namespace Aviate.Application.Services
                 flight.ChangeStatus(request.Status.Value);
 
             if (request.DepartureTime.HasValue && request.ArrivalTime.HasValue)
-                flight.ChangeSchedule(request.DepartureTime.Value, request.ArrivalTime.Value);
+                flight.ChangeSchedule(request.DepartureTime.Value.ToUniversalTime(), request.ArrivalTime.Value.ToUniversalTime());
 
             if (request.AirplaneId.HasValue && request.DepartureTime.HasValue)
             {
-                var airplaneConflict = await _flights.ExistsForAirplaneAtTimeAsync(request.AirplaneId.Value, request.DepartureTime.Value);
+                var airplaneConflict = await _flights.ExistsForAirplaneAtTimeAsync(request.AirplaneId.Value, request.DepartureTime.Value.ToUniversalTime());
                 if (airplaneConflict)
                     throw new FlightConflictException("This airplane already has a flight at the same departure time.");
             }
@@ -268,7 +268,7 @@ namespace Aviate.Application.Services
                 request.ArrivalAirportId.HasValue && request.DepartureTime.HasValue)
             {
                 var routeConflict = await _flights.ExistsAsync(request.AirplaneId.Value, request.DepartureAirportId.Value,
-                    request.ArrivalAirportId.Value, request.DepartureTime.Value);
+                    request.ArrivalAirportId.Value, request.DepartureTime.Value.ToUniversalTime());
 
                 if (routeConflict)
                     throw new FlightConflictException("A flight for this route already exists at the same time.");

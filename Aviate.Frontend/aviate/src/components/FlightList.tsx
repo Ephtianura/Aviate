@@ -25,7 +25,7 @@ export default function FlightList({ selectedFlight, setSelectedFlight }: Flight
   if (!flights.length) return <p>Рейсів ще немає</p>;
 
   return (
-    <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4 w-full">
       {flights.map(f => (
         <FlightCard 
           key={f.id} 

@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-
 export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const body = options.body;
 
@@ -49,24 +48,18 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
     // }
 
     const err: any = new Error(
-      data?.error || data?.message || `HTTP error! status: ${res.status}`
+      data?.error || data?.message || `HTTP error! status: ${res.status}`,
     );
     err.status = res.status;
     err.data = data || text;
     throw err;
-
-   
-
   }
 
   return data;
 }
 
-
-
-
-  // Логин
- export async function login(data: {email: string; password: string}) {
+// Логин
+export async function login(data: { email: string; password: string }) {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
       method: "POST",
@@ -89,7 +82,9 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
 
     return await res.json();
   } catch {
-    return { error: "Сервер недоступний. Перевірте підключення або спробуйте пізніше." };
+    return {
+      error: "Сервер недоступний. Перевірте підключення або спробуйте пізніше.",
+    };
   }
 }
 
@@ -100,12 +95,15 @@ export async function register(data: {
   password: string;
 }) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      credentials: "include",
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        credentials: "include",
+      },
+    );
 
     const body = await res.json().catch(() => ({}));
 
@@ -125,18 +123,14 @@ export async function register(data: {
   }
 }
 
+export const logout = () => apiFetch("/auth/logout", { method: "POST" });
 
-
-
-  export const logout = () => apiFetch("/auth/logout", { method: "POST" });
-
-  
-  // Получение профиля
+// Получение профиля
 export const getUserMe = async () => {
   return apiFetch("/user/me");
 };
 
- interface UserProfile {
+interface UserProfile {
   fullName: string;
   email: string;
   password?: string;
@@ -146,10 +140,12 @@ export const getUserMe = async () => {
 export const updateUserProfile = async (data: Partial<UserProfile>) => {
   const body: Record<string, string> = {};
 
-  if (data.fullName && data.fullName.trim() !== "") body.fullName = data.fullName;
+  if (data.fullName && data.fullName.trim() !== "")
+    body.fullName = data.fullName;
   if (data.email && data.email.trim() !== "") body.email = data.email;
   if (data.phone && data.phone.trim() !== "") body.phone = data.phone;
-  if (data.password && data.password.trim() !== "") body.password = data.password;
+  if (data.password && data.password.trim() !== "")
+    body.password = data.password;
 
   if (Object.keys(body).length === 0) return { message: "Нет изменений" };
 
@@ -187,7 +183,3 @@ export const updateUserProfile = async (data: Partial<UserProfile>) => {
 
   return dataResponse;
 };
-
-
-
-

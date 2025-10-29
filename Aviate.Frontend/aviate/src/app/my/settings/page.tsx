@@ -6,7 +6,9 @@ import WhiteCard from "@/components/Cards/WhiteCard";
 import { ProfileLayout } from "@/components/Layouts/ProfileLayout";
 import { LuLogIn, LuLogOut } from "react-icons/lu";
 import { CiSaveDown2 } from "react-icons/ci";
-import { getUserMe, updateUserProfile } from "@/lib/api";
+import { getUserMe, logout, updateUserProfile } from "@/lib/api";
+import { LoginModal } from "@/components/Modals/LoginModal";
+import { RegisterModal } from "@/components/Modals/RegisterModal";
 
 interface UserProfile {
   fullName: string;
@@ -16,7 +18,7 @@ interface UserProfile {
 }
 
 export default function Settings() {
-  const { isLoggedIn } = useAuth();
+   const { isLoggedIn, setIsLoggedIn, userRole, userName, setUserRole } = useAuth();
 
   // Текущее состояние пользователя (редактируемые поля)
   const [user, setUser] = useState<UserProfile>({
@@ -39,6 +41,21 @@ export default function Settings() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const [isLoginOpen, setLoginOpen] = useState(false);
+  const [isRegisterOpen, setRegisterOpen] = useState(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err: any) {
+      if (err.status !== 401) {
+        console.error("Logout error:", err);
+      }
+    } finally {
+      setIsLoggedIn(false);
+      setUserRole(null);
+      window.location.href = "/";
+    }
+  };
   // Загружаем данные пользователя при монтировании
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -108,11 +125,6 @@ export default function Settings() {
     }
   };
 
-
-
-
-
-
   return (
     <ProfileLayout>
       <div className="flex flex-col gap-4">
@@ -129,7 +141,7 @@ export default function Settings() {
             <div className="flex flex-col gap-4">
 
               <h1 className="text-primary-black text-xl font-bold">
-              Особиста інформація
+                Особиста інформація
               </h1>
 
               {/* Ім'я */}
@@ -197,19 +209,41 @@ export default function Settings() {
         <div>
           {isLoggedIn ? (
             <button
+              onClick={handleLogout}
               className="bg-gray-200 text-primary-black px-4 py-2 rounded-xl hover:bg-gray-300 font-bold w-full flex items-center gap-2 justify-center transition-colors duration-200"
             >
               <LuLogOut className="w-5 h-5" /> Вийти
             </button>
           ) : (
             <button
-              className="bg-[#1071F2] hover:bg-[#1172F3] active:bg-[#0E64DB] text-white font-bold rounded-xl px-3 py-2 w-full flex items-center gap-2 justify-center transition-colors duration-200"
+              onClick={() => setLoginOpen(true)}
+              className="bg-[#1071F2] hover:bg-[#1172F3] active:bg-[#0E64DB] text-white font-bold
+              rounded-xl px-3 py-2 w-full flex items-center gap-2 justify-center transition-colors duration-200"
             >
               <LuLogIn className="w-5 h-5" /> Увійти
             </button>
           )}
         </div>
+
+        {/* Модалки */}
+        <LoginModal
+          isOpen={isLoginOpen}
+          onClose={() => setLoginOpen(false)}
+          onSwitchToRegister={() => {
+            setLoginOpen(false);
+            setRegisterOpen(true);
+          }}
+        />
+        <RegisterModal
+          isOpen={isRegisterOpen}
+          onClose={() => setRegisterOpen(false)}
+          onSwitchToLogin={() => {
+            setRegisterOpen(false);
+            setLoginOpen(true);
+          }}
+        />
       </div>
     </ProfileLayout>
   );
 }
+

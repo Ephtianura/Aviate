@@ -27,17 +27,23 @@ export default function AdminSidebar() {
 
         {(userRole === "Admin" ) && (
           <>
-            {/* <Link href={"/admin/users"} className="hover:bg-gray-very-light rounded-xl px-2 py-[6px]">
+            <Link href={"/admin/users"} className="hover:bg-gray-very-light rounded-xl px-2 py-[6px]">
               <div className="flex gap-3 items-center">
                 <FaUsers className="w-5 h-5 text-gray-text" />
                 <p className="font-bold">Користувачі</p>
               </div>
-            </Link> */}
+            </Link>
 
             <Link href={"/admin/airports"} className="hover:bg-gray-very-light rounded-xl px-2 py-[6px]">
               <div className="flex gap-3 items-center">
                 <TbBuildingAirport className="w-5 h-5 text-gray-text" />
                 <p className="font-bold">Аеропорти</p>
+              </div>
+            </Link>
+             <Link href={"/admin/airplanes"} className="hover:bg-gray-very-light rounded-xl px-2 py-[6px]">
+              <div className="flex gap-3 items-center">
+                <IoIosAirplane className="w-5 h-5 text-gray-text" />
+                <p className="font-bold">Літаки</p>
               </div>
             </Link>
 

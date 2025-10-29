@@ -17,7 +17,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean >(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
 
@@ -70,13 +70,9 @@ const refreshAuth = async () => {
   }, [isLoggedIn, pathname, router]);
 
   // Пока проверяем авторизацию
-  if (isLoggedIn === null) {
-    return (
-      <div className="flex h-screen items-center justify-center text-gray-600">
-        Перевірка авторизації...
-      </div>
-    );
-  }
+  // if (isLoggedIn === null) {
+   
+  // }
 
   return (
     <AuthContext.Provider

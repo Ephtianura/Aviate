@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { getAirports, getAirplanes, createFlight, updateFlight } from "@/hooks/apiFlights";
 import WhiteCard from "@/components/Cards/WhiteCard";
+import { useToast } from "@/components/ToastProvider";
 
 interface FlightFormProps {
   flightToEdit?: any;
@@ -17,6 +18,7 @@ const flightStatusOptions = [
 ];
 
 export default function FlightForm({ flightToEdit, onSuccess }: FlightFormProps) {
+  const { error, success } = useToast();
   const [airports, setAirports] = useState<any[]>([]);
   const [airplanes, setAirplanes] = useState<any[]>([]);
   const [form, setForm] = useState({
@@ -41,8 +43,8 @@ export default function FlightForm({ flightToEdit, onSuccess }: FlightFormProps)
         departureAirportId: flightToEdit.departureAirportId,
         arrivalAirportId: flightToEdit.arrivalAirportId,
         basePrice: flightToEdit.basePrice,
-        departureTime: flightToEdit.departureTime.slice(0,16),
-        arrivalTime: flightToEdit.arrivalTime.slice(0,16),
+        departureTime: flightToEdit.departureTime.slice(0, 16),
+        arrivalTime: flightToEdit.arrivalTime.slice(0, 16),
         economySeats: flightToEdit.economySeats || 0,
         businessSeats: flightToEdit.businessSeats || 0,
         firstClassSeats: flightToEdit.firstClassSeats || 0,
@@ -88,10 +90,11 @@ export default function FlightForm({ flightToEdit, onSuccess }: FlightFormProps)
           firstClassSeats: 0,
           status: 0,
         });
+        success("Успішно!");
       }
     } catch (err: any) {
       if (err.data?.errors) setErrors(err.data.errors);
-      else alert(err.message || "Помилка");
+      else error(`Помилка: ${err?.message ?? "Помилка"}`);
     } finally {
       setLoading(false);
     }

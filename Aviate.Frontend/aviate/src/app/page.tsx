@@ -1,77 +1,40 @@
 import SearchCard from "@/components/SearchCard";
-import HotFlights from "@/components/HotFlights";
-import { SpotCard } from "@/components/Cards/SpotCard";
+import SpotsGrid from "@/components/SpotsGrid";
 
 export default function HomePage() {
 
   return (
-    <div className="">
+    <main className="">
+      <div
+        className="absolute w-full z-0 bg-[url('/bg.png')] 
+      h-[965px] bg-cover bg-center
+        brightness-110">
 
-      <main>
-        <div className="flex  justify-center items-end bg-primary h-[360px]">
-          <h1 className="text-white text-5xl font-extrabold text-center mb-10">
-            Тут купують дешеві авіаквитки
-          </h1>
-        </div>
+      </div>
 
-        <div className=" sticky top-16 z-10">
-          <SearchCard />
-        </div>
-        <div className=" bg-primary h-[220px]"> </div>
+      <div className="flex justify-center items-end bg-primary h-[360px] z-10">
+        <h1 className="text-white text-5xl font-extrabold text-center mb-10 z-10">
+          Тут купують дешеві авіаквитки
+        </h1>
+      </div>
 
-        <div className="flex justify-center items-center -mt-[150px]">
-          <div className="container max-w-4xl grid grid-cols-2 gap-x-6 gap-y-12 justify-center items-center">
+      <div className="top-16 z-20">
+        <SearchCard />
+      </div>
+      <div className="h-[500px]" style={{
+        backgroundImage: `
+             radial-gradient(circle at 20% 30%, #fef08a 0%, transparent 50%),
+             radial-gradient(circle at 80% 70%, #fef08a 0%, transparent 50%),
+             radial-gradient(circle at 50% 10%, #fef08a 0%, transparent 40%)
+           `,
+        backgroundSize: '200% 200%',
+      }}> </div>
 
-            <div className="col-span-2 sm:col-span-1">
-              <HotFlights />
-            </div>
-            <div className="col-span-2 sm:col-span-1">
-              <SpotCard
-                city="Тбілісі"
-                title="Фортеця Нарікала"
-                image="/images/tbilisi-narikala.jpg"
-                description="Висока, красива та неприступна фортеця, пов’язана з історією міста. У спекотну погоду піднімайтеся канатною дорогою від парку Ріке та зустрічайте захід сонця на стінах."
-              />
-            </div>
+      <div className="flex justify-center items-center -mt-[410px]">
+        <SpotsGrid />
 
-            <div className="col-span-2 ">
-              <SpotCard
-                city="Стамбул"
-                title="Мечеть Султанахмет"
-                image="/images/istanbul-blue-mosque.jpg"
-                description="Найфотогенічніша мечеть Стамбула з шістьма мінаретами. Щоб зрозуміти, чому її називають Блакитною, потрібно зазирнути всередину."
-              />
-            </div>
-
-            <SpotCard
-              city="Батумі"
-              title="Алфавітна вежа"
-              image="/images/batumi-tower.jpg"
-              description="Незвичайна споруда у формі ДНК, прикрашена літерами грузинського алфавіту. Зверху відкривається приголомшливий вид на море."
-            />
-
-            <SpotCard
-              city="Алмати"
-              title="Медео"
-              image="/images/almaty-medeo.jpg"
-              description="Високогірний каток та легендарне місце відпочинку. Прозоре повітря, гори та приголомшливі краєвиди навколо."
-            />
-
-            <div className="col-span-2">
-              <SpotCard
-                city="Вільнюс"
-                title="Вежа Гедиміна"
-                image="/images/vilnius-gediminas-tower.jpg"
-                description="Середньовічна кам’яна вежа на пагорбі, звідки відкривається мальовничий вид на Старе місто Вільнюса та річки."
-              />
-            </div>
-          </div>
-        </div>
-
-
-        {/* <div className="h-[3000px]"></div> */}
-
-      </main>
-    </div>
+      </div>
+ 
+    </main>
   );
 }

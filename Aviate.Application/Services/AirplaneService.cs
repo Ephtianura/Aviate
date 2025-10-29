@@ -62,7 +62,7 @@ namespace Aviate.Application.Services
                 request.Model,
                 request.RegistrationNumber,
                 request.Capacity,
-                request.ManufactureDate
+                request.ManufactureDate.ToUniversalTime()
             );
 
             // Якщо встановлено поле Status - міняємо
@@ -100,7 +100,7 @@ namespace Aviate.Application.Services
             if (request.Status.HasValue && request.Status.Value != airplane.Status)
                 airplane.ChangeStatus(request.Status.Value);
             if (request.ManufactureDate.HasValue && request.ManufactureDate.Value != airplane.ManufactureDate)
-                airplane.ChangeManufactureDate(request.ManufactureDate.Value);
+                airplane.ChangeManufactureDate(request.ManufactureDate.Value.ToUniversalTime());
 
             await _airplanes.UpdateAsync(airplane);
         }
