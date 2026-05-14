@@ -18,6 +18,8 @@ import {
     CartesianGrid,
 } from "recharts";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { redirect } from "next/navigation";
 
 type Flight = {
     id: string;
@@ -60,6 +62,9 @@ export default function AdminDashboard() {
         key: "line-static"
 
     };
+    const { userRole } = useAuth();
+    if (userRole === "Employee")
+        redirect("/admin/flights");
 
     const COLORS = ["#7C3AED", "#F87171", "#FBBF24", "#34D399", "#60A5FA", "#F472B6"];
 

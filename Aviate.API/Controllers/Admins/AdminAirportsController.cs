@@ -13,7 +13,7 @@ namespace Aviate.API.Controllers.Admin
     [Route("api/admin/airports")]
     [ApiController]
 
-    [Authorize(Policy = "AdminPolicy")]
+    [Authorize(Policy = "EmployeePolicy")]
     public class AdminAirtportsController : ControllerBase
     {
         private readonly IAirportService _airportsService;

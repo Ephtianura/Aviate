@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { ProfileLayout } from "@/components/Layouts/ProfileLayout";
 import BookingCard from "@/components/Cards/BookingCard";
 import WhiteCard from "@/components/Cards/WhiteCard";
+import Pagination from "@/components/Pagination";
 
 export default function MyBookings() {
   const { isLoggedIn } = useAuth();
@@ -21,7 +22,7 @@ export default function MyBookings() {
       setLoading(true);
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/bookings/my?page=${page}&pageSize=${pageSize}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/bookings/my?page=${page}&pageSize=${pageSize}&SortBy=BookingDate&SortDesc=true`,
         { credentials: "include" }
       );
 
@@ -62,6 +63,14 @@ export default function MyBookings() {
               </p>
             )}
 
+            {totalPages > 1 && (
+              <div className="">
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
+              </div>)}
             <div className="flex flex-col gap-6">
               {bookings.map((b) => (
                 <BookingCard key={b.id} booking={b} />
@@ -70,62 +79,70 @@ export default function MyBookings() {
 
             {/* PAGINATION */}
             {totalPages > 1 && (
-              <div className="flex justify-center mt-8">
-                <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-md border">
+              <div>
+                <div className="mt-4">
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    onPageChange={setPage}
+                  />
+                </div>
+                {/* <div className="flex justify-center mt-8">
 
-                  {/* PREV */}
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className={`
-          p-2 rounded-lg transition-all duration-200
-          ${page === 1
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "hover:bg-gray-100 text-primary-black"}
-        `}
-                  >
-                    <span className="text-2xl">←</span>
-                  </button>
+                  <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-md border">
 
-                  {/* NUMBERS */}
-                  <div className="flex items-center gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                      <button
-                        key={p}
-                        onClick={() => setPage(p)}
-                        className={`
+                    <button
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className={`
+                  p-2 rounded-lg transition-all duration-200
+                  ${page === 1
+                          ? "text-gray-400 cursor-not-allowed"
+                          : "hover:bg-gray-100 text-primary-black"}
+                  `}
+                    >
+                      <span className="text-2xl">←</span>
+                    </button>
+
+                    <div className="flex items-center gap-2">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                        <button
+                          key={p}
+                          onClick={() => setPage(p)}
+                          className={`
               w-9 h-9 flex items-center justify-center rounded-lg border text-sm font-medium
               transition-all duration-200
               ${p === page
-                            ? "bg-primary text-white border-primary shadow-md scale-105"
-                            : "bg-white hover:bg-gray-100 border-gray-300 text-primary-black"
-                          }
+                              ? "bg-primary text-white border-primary shadow-md scale-105"
+                              : "bg-white hover:bg-gray-100 border-gray-300 text-primary-black"
+                            }
             `}
-                      >
-                        {p}
-                      </button>
-                    ))}
-                  </div>
+                        >
+                          {p}
+                        </button>
+                      ))}
+                    </div>
 
-                  {/* NEXT */}
-                  <button
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                    className={`
+                    <button
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={page === totalPages}
+                      className={`
           p-2 rounded-lg transition-all duration-200
           ${page === totalPages
-                        ? "text-gray-400 "
-                        : "hover:bg-gray-100 text-primary-black"}
+                          ? "text-gray-400 "
+                          : "hover:bg-gray-100 text-primary-black"}
         `}
-                  >
-                    <span className="text-2xl">→</span>
-                  </button>
+                    >
+                      <span className="text-2xl">→</span>
+                    </button>
 
-                </div>
+                  </div>
+                </div> */}
               </div>
             )}
 
           </div>
+
         </WhiteCard>
       </div>
     </ProfileLayout>

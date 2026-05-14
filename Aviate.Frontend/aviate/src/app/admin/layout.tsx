@@ -27,6 +27,11 @@ const ROLE = {
 
 export default async function AdminLayout({ children }: Props) {
 
+    const API_URL =
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:5004"
+            : "http://aviate_api:5004";
+
     const cookieStore = await cookies();
 
     const cookieHeader = cookieStore
@@ -34,7 +39,7 @@ export default async function AdminLayout({ children }: Props) {
         .map(c => `${c.name}=${c.value}`)
         .join("; ");
 
-    const res = await fetch(`http://aviate_api:5004/api/user/me`, {
+    const res = await fetch(`${API_URL}/api/user/me`, {
         method: "GET",
         headers: {
             Cookie: cookieHeader,
@@ -42,15 +47,15 @@ export default async function AdminLayout({ children }: Props) {
         cache: "no-store",
     });
 
-      if (!res.ok) {
-            redirect("/login");
-        }
+    if (!res.ok) {
+        redirect("/");
+    }
 
-        const me: MeResponse = await res.json();
+    const me: MeResponse = await res.json();
 
-        if (me.role !== ROLE.ADMIN && me.role !== ROLE.EMPLOYEE) {
-            redirect("/");
-        }
+    if (me.role !== ROLE.ADMIN && me.role !== ROLE.EMPLOYEE) {
+        redirect("/");
+    }
 
     return (
         <div className="min-h-screen flex justify-center">

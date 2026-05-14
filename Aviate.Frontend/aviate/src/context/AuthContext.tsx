@@ -57,22 +57,10 @@ const refreshAuth = async () => {
   }
 };
 
-
   useEffect(() => {
     refreshAuth();
   }, []);
 
-  // Если пользователь авторизован и случайно на странице /login — перенаправим
-  useEffect(() => {
-    if (isLoggedIn && pathname === "/login") {
-      router.replace("/");
-    }
-  }, [isLoggedIn, pathname, router]);
-
-  // Пока проверяем авторизацию
-  // if (isLoggedIn === null) {
-   
-  // }
 
   return (
     <AuthContext.Provider

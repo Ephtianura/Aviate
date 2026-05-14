@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import WhiteCard from "@/components/Cards/WhiteCard";
 import { apiFetch } from "@/lib/api";
 import { useToast } from "@/components/ToastProvider";
+import { useAuth } from "@/context/AuthContext";
+import { redirect } from "next/navigation";
 
 type User = {
   id: string;
@@ -21,6 +23,9 @@ const roleMap: Record<number, string> = {
 };
 
 export default function UsersPage() {
+  const { userRole } = useAuth();
+  if (userRole === "Employee")
+    redirect("/admin/flights");
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -59,16 +64,16 @@ export default function UsersPage() {
     });
   };
 
-const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-) => {
-  const { name, value } = e.target;
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
 
-  setForm((prev) => ({
-    ...prev,
-    [name]: name === "role" ? Number(value) : value,
-  }));
-};
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === "role" ? Number(value) : value,
+    }));
+  };
 
   const updateUser = async () => {
     try {

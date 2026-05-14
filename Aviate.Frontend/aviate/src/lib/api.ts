@@ -38,15 +38,6 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   }
 
   if (!res.ok) {
-    // if (res.status === 401 && typeof window !== "undefined") {
-    //   const currentPath = window.location.pathname;
-    //   if (currentPath !== "/login" && currentPath !== "/register") {
-    //     console.warn("⚠️ Сессия истекла. Перенаправляем на логин...");
-    //     document.cookie = "";
-    //     window.location.href = "/login";
-    //   }
-    // }
-
     const err: any = new Error(
       data?.error || data?.message || `HTTP error! status: ${res.status}`,
     );

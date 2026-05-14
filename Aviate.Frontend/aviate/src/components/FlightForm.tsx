@@ -55,9 +55,9 @@ export default function FlightForm({ flightToEdit, onSuccess }: FlightFormProps)
 
   useEffect(() => {
     const fetchData = async () => {
-      const [airportsData, airplanesData] = await Promise.all([getAirports(), getAirplanes()]);
+      const [airportsData, airplanesRes] = await Promise.all([getAirports(), getAirplanes(1, 100)]);
       setAirports(airportsData);
-      setAirplanes(airplanesData);
+      setAirplanes(airplanesRes.items ?? []);
     };
     fetchData();
   }, []);
@@ -102,6 +102,10 @@ export default function FlightForm({ flightToEdit, onSuccess }: FlightFormProps)
 
   const inputStyle = "border border-gray-300 rounded px-3 py-2 w-full focus:ring-2 focus:ring-primary focus:outline-none";
 
+  const selectedAirplane = airplanes.find(
+    a => String(a.id) === String(form.airplaneId)
+  );
+
   return (
     <WhiteCard>
       <h2 className="text-xl font-bold mb-4">{flightToEdit ? "Редагувати рейс" : "Створити рейс"}</h2>
@@ -126,11 +130,27 @@ export default function FlightForm({ flightToEdit, onSuccess }: FlightFormProps)
 
         <div>
           <label className="block text-sm font-medium mb-1">Літак</label>
-          <select className={inputStyle} name="airplaneId" value={form.airplaneId} onChange={handleChange}>
+
+          <select
+            className={inputStyle}
+            name="airplaneId"
+            value={form.airplaneId}
+            onChange={handleChange}
+          >
             <option value="">Виберіть літак</option>
-            {airplanes.map(a => <option key={a.id} value={a.id}>{a.model} ({a.registrationNumber})</option>)}
+
+            {airplanes.map(a => (
+              <option key={a.id} value={a.id}>
+                {a.model} ({a.registrationNumber})
+              </option>
+            ))}
           </select>
-          {errors.AirplaneId && <p className="text-red-500 text-sm">{errors.AirplaneId.join(", ")}</p>}
+
+          {errors.AirplaneId && (
+            <p className="text-red-500 text-sm">
+              {errors.AirplaneId.join(", ")}
+            </p>
+          )}
         </div>
 
         <div>
@@ -174,6 +194,13 @@ export default function FlightForm({ flightToEdit, onSuccess }: FlightFormProps)
             ))}
           </select>
         </div>
+        {selectedAirplane && (
+          <div className="font-semibold">
+            Всього місць:{" "}
+            {(selectedAirplane.capacity)}
+          </div>
+        )}
+
       </div>
 
       <button
