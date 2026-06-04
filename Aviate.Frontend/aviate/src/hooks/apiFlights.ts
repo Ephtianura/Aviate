@@ -21,7 +21,7 @@ export const getAirplanes = async (page = 1, pageSize = 12, search?: string) => 
 
 export const getFlights = async (page = 1, pageSize = 10) => {
   const res = await apiFetch(
-    `/flights?Page=${page}&PageSize=${pageSize}&SortBy=ArrivalTime`
+    `/flights?Page=${page}&PageSize=${pageSize}&SortBy=ArrivalTime&SortDesc=true`
   );
   return res; 
 };

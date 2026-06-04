@@ -9,6 +9,7 @@ using Aviate.Application.Validation.BookingValidator;
 using Aviate.Application.Validation.FlightValidator;
 using Aviate.Application.Validation.UserValidator;
 using Aviate.Core.Contracts;
+using Aviate.Core.Models;
 using Aviate.DataAccess;
 using Aviate.DataAccess.Repositories;
 using Aviate.Infrastructure.Auth;
@@ -16,7 +17,10 @@ using Aviate.Infrastructure.Payment;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

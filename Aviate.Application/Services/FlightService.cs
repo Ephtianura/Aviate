@@ -256,23 +256,23 @@ namespace Aviate.Application.Services
             if (request.DepartureTime.HasValue && request.ArrivalTime.HasValue)
                 flight.ChangeSchedule(request.DepartureTime.Value.ToUniversalTime(), request.ArrivalTime.Value.ToUniversalTime());
 
-            if (request.AirplaneId.HasValue && request.DepartureTime.HasValue)
-            {
-                var airplaneConflict = await _flights.ExistsForAirplaneAtTimeAsync(request.AirplaneId.Value, request.DepartureTime.Value.ToUniversalTime());
-                if (airplaneConflict)
-                    throw new FlightConflictException("This airplane already has a flight at the same departure time.");
-            }
+            //if (request.AirplaneId.HasValue && request.DepartureTime.HasValue)
+            //{
+            //    var airplaneConflict = await _flights.ExistsForAirplaneAtTimeAsync(request.AirplaneId.Value, request.DepartureTime.Value.ToUniversalTime());
+            //    if (airplaneConflict)
+            //        throw new FlightConflictException("This airplane already has a flight at the same departure time.");
+            //}
 
             // Перевірка чи нема такого самого рейса
-            if (request.AirplaneId.HasValue && request.DepartureAirportId.HasValue &&
-                request.ArrivalAirportId.HasValue && request.DepartureTime.HasValue)
-            {
-                var routeConflict = await _flights.ExistsAsync(request.AirplaneId.Value, request.DepartureAirportId.Value,
-                    request.ArrivalAirportId.Value, request.DepartureTime.Value.ToUniversalTime());
+            //if (request.AirplaneId.HasValue && request.DepartureAirportId.HasValue &&
+            //    request.ArrivalAirportId.HasValue && request.DepartureTime.HasValue)
+            //{
+            //    var routeConflict = await _flights.ExistsAsync(request.AirplaneId.Value, request.DepartureAirportId.Value,
+            //        request.ArrivalAirportId.Value, request.DepartureTime.Value.ToUniversalTime());
 
-                if (routeConflict)
-                    throw new FlightConflictException("A flight for this route already exists at the same time.");
-            }
+            //    if (routeConflict)
+            //        throw new FlightConflictException("A flight for this route already exists at the same time.");
+            //}
 
             // Оновлюємо
             await _flights.UpdateAsync(flight);

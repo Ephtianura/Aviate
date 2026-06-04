@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { getFlights } from "@/hooks/apiFlights";
 import FlightCard from "@/components/Cards/FlightCard";
-import { div } from "framer-motion/client";
 import Pagination from "./Pagination";
 
 interface FlightListProps {
@@ -33,6 +32,15 @@ export default function FlightList({ selectedFlight, setSelectedFlight }: Flight
     fetchData();
   }, [page]);
 
+  // Функция для обработки клика по карточке
+  const handleFlightClick = (flight: any) => {
+    if (selectedFlight?.id === flight.id) {
+      setSelectedFlight(null); // Если кликнули по уже выбранному — сбрасываем в null
+    } else {
+      setSelectedFlight(flight); // Если кликнули по другому — выбираем его
+    }
+  };
+
   if (loading) return <p>Завантаження рейсів...</p>;
   if (!flights.length) return <p>Рейсів ще немає</p>;
 
@@ -46,14 +54,12 @@ export default function FlightList({ selectedFlight, setSelectedFlight }: Flight
         />
       </div>
       <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4 w-full">
-
-
         {flights.map(f => (
           <FlightCard
             key={f.id}
             flight={f}
             bgColor={selectedFlight?.id === f.id ? "bg-blue-100" : "bg-gray-100"}
-            onClick={() => setSelectedFlight(f)}
+            onClick={() => handleFlightClick(f)} // Используем новую функцию хэндлер
           />
         ))}
       </div>

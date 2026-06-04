@@ -255,6 +255,9 @@ export default function FlightBookingModal({
                                     <b>Номер рейсу:</b> {flight.flightNumber}
                                 </div>
                                 <div className="text-lg font-bold text-primary">{getPrice()} ₴</div>
+                                <p className="text-sm text-gray-600">
+                                    В ціну квитка також буде входити податковий налог в розмірі 50₴
+                                </p>
                                 <button
                                     onClick={bookSeat}
                                     disabled={isBooking}

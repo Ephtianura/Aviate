@@ -11,7 +11,7 @@ using FluentValidation;
 using System.Collections.Generic;
 
 namespace Aviate.Application.Services
-    {
+{
     public class BookingService : IBookingService
     {
         private readonly IBookingRepository _bookings;
@@ -78,7 +78,7 @@ namespace Aviate.Application.Services
             var flight = await _flights.GetByIdAsync(request.FlightId) ?? throw new EntityNotFoundException("Flight", request.FlightId);
 
             // Не можна забронювати місце, якщо рейс вже в польоті, відмінений або завершений
-            if (flight.Status is FlightStatus.InFlight or FlightStatus.Cancelled or FlightStatus.Completed)            
+            if (flight.Status is FlightStatus.InFlight or FlightStatus.Cancelled or FlightStatus.Completed)
                 throw new ConflictException("You cannot reserve a seat when the flight is already in flight, cancelled or completed.");
 
             var user = await _users.GetByIdAsync(request.UserId) ?? throw new EntityNotFoundException("User", request.UserId);
@@ -93,7 +93,7 @@ namespace Aviate.Application.Services
                     Class = SeatClass.Economy,
                     IsBooked = false,
                     Page = 1,
-                    PageSize = int.MaxValue 
+                    PageSize = int.MaxValue
                 };
 
                 var result = await _seats.GetFilteredAsync(filter);
@@ -111,10 +111,11 @@ namespace Aviate.Application.Services
                 if (seat.IsBooked)
                     throw new ConflictException("Seat is already booked");
             }
-            
 
-            decimal airportFee = 50;
             decimal totalPrice = flight.BasePrice;
+
+            //Налог аєропорту
+            decimal airportFee = 50;
             decimal businessCoefficient = 2.5m;
             decimal firstCoefficient = 3m;
 
@@ -127,6 +128,7 @@ namespace Aviate.Application.Services
                 totalPrice *= firstCoefficient;
             }
 
+            // Додаємо налог до собівартості квитка
             totalPrice += airportFee;
 
             // Створення бронювання
