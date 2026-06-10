@@ -50,12 +50,26 @@ namespace Aviate.DataAccess.Repositories
 
         public async Task<PagedResult<Flight>> GetFilteredAsync(FlightFilter filter)
         {
+            // Инициализируем запрос через Raw SQL с оконной функцией.
+            // Выбираем только те рейсы, которые входят в ТОП-5 для каждого дня.
             var query = _dbContext.Flights
+                .FromSqlRaw(@"
+            WITH RankedFlights AS (
+                SELECT *, 
+                       ROW_NUMBER() OVER (
+                           PARTITION BY CAST(""DepartureTime"" AS DATE) 
+                           ORDER BY ""DepartureTime"" ASC
+                       ) as RowNum
+                FROM ""Flights""
+            )
+            SELECT * FROM RankedFlights 
+            WHERE RowNum <= 5")
                 .Include(f => f.Airplane)
                 .Include(f => f.DepartureAirport)
                 .Include(f => f.ArrivalAirport)
                 .AsQueryable();
 
+            // 1. Текстовый поиск
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 var term = filter.Search.Trim().ToLower();
@@ -67,6 +81,7 @@ namespace Aviate.DataAccess.Repositories
                     f.DepartureAirport.Country.ToLower().Contains(term));
             }
 
+            // 2. Фильтры по Сущностям
             if (filter.AirplaneId.HasValue)
                 query = query.Where(f => f.AirplaneId == filter.AirplaneId);
 
@@ -79,6 +94,7 @@ namespace Aviate.DataAccess.Repositories
             if (filter.Status.HasValue)
                 query = query.Where(f => f.Status == filter.Status);
 
+            // 3. Фильтры даты отправления (Departure) + ExcludeExpired
             if (filter.ExcludeExpired)
             {
                 var effectiveDepartureFrom = filter.DepartureFrom.HasValue && filter.DepartureFrom.Value > DateTimeOffset.UtcNow
@@ -95,7 +111,7 @@ namespace Aviate.DataAccess.Repositories
             if (filter.DepartureTo.HasValue)
                 query = query.Where(f => f.DepartureTime <= filter.DepartureTo.Value);
 
-
+            // 4. Фильтры даты прибытия (Arrival) + ExcludeExpired
             if (filter.ExcludeExpired)
             {
                 var effectiveArrivalFrom = filter.ArrivalFrom.HasValue && filter.ArrivalFrom.Value > DateTimeOffset.UtcNow
@@ -112,18 +128,7 @@ namespace Aviate.DataAccess.Repositories
             if (filter.ArrivalTo.HasValue)
                 query = query.Where(f => f.ArrivalTime <= filter.ArrivalTo.Value);
 
-            // ============================================================================
-            // КРИТИЧЕСКИЙ МОМЕНТ: ОГРАНИЧЕНИЕ "НЕ БОЛЕЕ 5 РЕЙСОВ НА ОДНУ ДАТУ"
-            // Группируем по чистой дате (без времени) и берем топ-5 в каждой группе через SelectMany
-            // ============================================================================
-            query = query
-                .GroupBy(f => f.DepartureTime.Date)
-                .SelectMany(g => g
-                    .OrderBy(f => f.DepartureTime) // Важно: сортируем внутри группы, чтобы первыми шли ранние рейсы дня
-                    .Take(5));
-            // ============================================================================
-
-            // Основная сортировка уже отфильтрованного по дням пула рейсов
+            // 5. Динамическая сортировка списка
             query = filter.SortBy?.ToLower() switch
             {
                 "flightnumber" => filter.SortDesc ? query.OrderByDescending(f => f.FlightNumber) : query.OrderBy(f => f.FlightNumber),
@@ -133,7 +138,10 @@ namespace Aviate.DataAccess.Repositories
                 _ => query.OrderBy(f => f.FlightNumber)
             };
 
+            // 6. Подсчет общего количества (база сделает COUNT поверх CTE-запроса)
             var totalCount = await query.CountAsync();
+
+            // 7. Постраничный вывод (база добавит OFFSET и FETCH/LIMIT автоматически)
             var items = await query
                 .Skip((filter.Page - 1) * filter.PageSize)
                 .Take(filter.PageSize)
