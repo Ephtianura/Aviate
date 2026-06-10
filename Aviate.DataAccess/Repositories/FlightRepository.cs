@@ -79,18 +79,51 @@ namespace Aviate.DataAccess.Repositories
             if (filter.Status.HasValue)
                 query = query.Where(f => f.Status == filter.Status);
 
-            if (filter.DepartureFrom.HasValue)
-                query = query.Where(f => f.DepartureTime >= filter.DepartureFrom);
+            if (filter.ExcludeExpired)
+            {
+                var effectiveDepartureFrom = filter.DepartureFrom.HasValue && filter.DepartureFrom.Value > DateTimeOffset.UtcNow
+                    ? filter.DepartureFrom.Value
+                    : DateTimeOffset.UtcNow;
+
+                query = query.Where(f => f.DepartureTime > effectiveDepartureFrom);
+            }
+            else if (filter.DepartureFrom.HasValue)
+            {
+                query = query.Where(f => f.DepartureTime >= filter.DepartureFrom.Value);
+            }
 
             if (filter.DepartureTo.HasValue)
-                query = query.Where(f => f.DepartureTime <= filter.DepartureTo);
+                query = query.Where(f => f.DepartureTime <= filter.DepartureTo.Value);
 
-            if (filter.ArrivalFrom.HasValue)
-                query = query.Where(f => f.ArrivalTime >= filter.ArrivalFrom);
+
+            if (filter.ExcludeExpired)
+            {
+                var effectiveArrivalFrom = filter.ArrivalFrom.HasValue && filter.ArrivalFrom.Value > DateTimeOffset.UtcNow
+                    ? filter.ArrivalFrom.Value
+                    : DateTimeOffset.UtcNow;
+
+                query = query.Where(f => f.ArrivalTime > effectiveArrivalFrom);
+            }
+            else if (filter.ArrivalFrom.HasValue)
+            {
+                query = query.Where(f => f.ArrivalTime >= filter.ArrivalFrom.Value);
+            }
 
             if (filter.ArrivalTo.HasValue)
-                query = query.Where(f => f.ArrivalTime <= filter.ArrivalTo);
+                query = query.Where(f => f.ArrivalTime <= filter.ArrivalTo.Value);
 
+            // ============================================================================
+            // КРИТИЧЕСКИЙ МОМЕНТ: ОГРАНИЧЕНИЕ "НЕ БОЛЕЕ 5 РЕЙСОВ НА ОДНУ ДАТУ"
+            // Группируем по чистой дате (без времени) и берем топ-5 в каждой группе через SelectMany
+            // ============================================================================
+            query = query
+                .GroupBy(f => f.DepartureTime.Date)
+                .SelectMany(g => g
+                    .OrderBy(f => f.DepartureTime) // Важно: сортируем внутри группы, чтобы первыми шли ранние рейсы дня
+                    .Take(5));
+            // ============================================================================
+
+            // Основная сортировка уже отфильтрованного по дням пула рейсов
             query = filter.SortBy?.ToLower() switch
             {
                 "flightnumber" => filter.SortDesc ? query.OrderByDescending(f => f.FlightNumber) : query.OrderBy(f => f.FlightNumber),

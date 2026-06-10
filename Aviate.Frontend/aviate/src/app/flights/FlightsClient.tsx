@@ -27,16 +27,21 @@ export default function FlightsClient() {
     const [selectedFlight, setSelectedFlight] = useState<any | null>(null); // новое состояние для модалки
 
     const handleSelectFlight = (flight: any) => {
-    if (!isLoggedIn) {
-        error('Увійдіть для бронювання');
-        return;
-    }
+        if (!isLoggedIn) {
+            error('Увійдіть для бронювання');
+            return;
+        }
 
-    setSelectedFlight(flight);
-};
+        setSelectedFlight(flight);
+    };
 
     const departureId = searchParams.get("DepartureAirportId");
     const arrivalId = searchParams.get("ArrivalAirportId");
+
+    const departureFrom = searchParams.get("DepartureFrom");
+    const departureTo = searchParams.get("DepartureTo");
+
+
 
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +66,7 @@ export default function FlightsClient() {
 
     useEffect(() => {
         // если нет ни одного параметра — смысла делать запрос нет
-        if (!departureId && !arrivalId) return;
+        // if (!departureId && !arrivalId && !departureFrom && !departureTo ) return;
 
         const fetchFlights = async () => {
             setLoading(true);
@@ -71,6 +76,13 @@ export default function FlightsClient() {
                 if (departureId) params.append("DepartureAirportId", departureId);
                 if (arrivalId) params.append("ArrivalAirportId", arrivalId);
 
+                if (departureFrom) params.append("DepartureFrom", departureFrom);
+                if (departureTo) params.append("DepartureTo", departureTo);
+
+                params.append("SortBy", "DepartureTime")
+
+                params.append("ExcludeExpired", "true")
+                 params.append("PageSize", "100")
                 const data = await apiFetch(`/flights?${params.toString()}`);
                 setFlights(data.items || []);
             } catch (e) {
@@ -81,9 +93,9 @@ export default function FlightsClient() {
         };
 
         fetchFlights();
-    }, [departureId, arrivalId]);
+    }, [searchParams]);
 
-   
+
 
     if (loading) return <div>Загрузка рейсів...</div>;
 

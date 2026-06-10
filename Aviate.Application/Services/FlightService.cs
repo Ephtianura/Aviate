@@ -52,6 +52,8 @@ namespace Aviate.Application.Services
             // Валідація фільтра
             await _filterValidator.ValidateAndThrowAsync(filter);
 
+            NormalizeFilter(filter);
+
             return await _flights.GetFilteredAsync(filter);
         }
 
@@ -185,12 +187,12 @@ namespace Aviate.Application.Services
             int business,
             int first)
         {
-             int _counter = 0;
-        var flightNumber = GenerateFlightNumber(
-                airplane.Id,
-                departure.Id,
-                arrival.Id,
-                departureTime);
+            int _counter = 0;
+            var flightNumber = GenerateFlightNumber(
+                    airplane.Id,
+                    departure.Id,
+                    arrival.Id,
+                    departureTime);
 
             return Flight.Create(
                 airplane,
@@ -316,6 +318,21 @@ namespace Aviate.Application.Services
 
             return $"{airlineCode}{numberPart}";
         }
+        private static void NormalizeFilter(FlightFilter filter)
+        {
+            if (filter.DepartureFrom.HasValue)
+                filter.DepartureFrom = filter.DepartureFrom.Value.ToUniversalTime();
 
+            if (filter.DepartureTo.HasValue)
+                filter.DepartureTo = filter.DepartureTo.Value.ToUniversalTime();
+
+            if (filter.ArrivalFrom.HasValue)
+                filter.ArrivalFrom = filter.ArrivalFrom.Value.ToUniversalTime();
+
+            if (filter.ArrivalTo.HasValue)
+                filter.ArrivalTo = filter.ArrivalTo.Value.ToUniversalTime();
+        }
     }
+
 }
+

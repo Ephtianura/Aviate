@@ -75,11 +75,11 @@ export default function PriceChart({ data, onSelect }: PriceChartProps) {
     return (
         <div className="flex flex-col gap-4">
             {/* Навигация */}
-            <div className="flex justify-between items-center mb-2">
+            <div className="flex justify-between items-center mb-2 ">
                 <button
                     onClick={handlePrev}
                     disabled={startIndex === 0}
-                    className="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+                    className="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 z-30"
                 >
                     <IoChevronBack />
                 </button>
@@ -89,7 +89,7 @@ export default function PriceChart({ data, onSelect }: PriceChartProps) {
                     disabled={
                         startIndex + daysPerView >= chartData.length
                     }
-                    className="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+                    className="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50  z-30"
                 >
                     <IoChevronForward />
                 </button>

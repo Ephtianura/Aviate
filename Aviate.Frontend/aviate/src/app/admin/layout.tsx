@@ -29,7 +29,7 @@ export default async function AdminLayout({ children }: Props) {
 
     const API_URL =
         process.env.NODE_ENV === "development"
-            ? "http://localhost:5004"
+            ? "http://localhost:5028"
             : "http://aviate_api:5004";
 
     const cookieStore = await cookies();

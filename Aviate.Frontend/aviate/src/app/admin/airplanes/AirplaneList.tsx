@@ -62,7 +62,7 @@ export default function AirplaneList({ onEdit }: Props) {
             success("Літак видалено");
             fetchAirplanes(page);
         } catch {
-            error("Помилка видалення літака");
+            error("Неможливо видалити літак, оскільки він використовується в рейсах.");
         }
     };
 

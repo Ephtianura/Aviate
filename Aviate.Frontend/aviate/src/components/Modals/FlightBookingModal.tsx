@@ -173,8 +173,8 @@ export default function FlightBookingModal({
                                         onChange={(e) => setSortBy(e.target.value as SortField)}
                                         className="border px-2 py-1 rounded"
                                     >
-                                        <option value="class">Клас</option>
-                                        <option value="isBooked">Заброньовано</option>
+                                        <option value="class">Усі місця</option>
+                                        <option value="isBooked">Вільні</option>
                                     </select>
 
                                     <button

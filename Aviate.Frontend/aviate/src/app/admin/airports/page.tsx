@@ -59,7 +59,7 @@ export default function AirportsPage() {
             success("Аеропорт видалено");
             await fetchAirports(page);
         } catch {
-            error("Помилка видалення аеропорту");
+            error("Неможливо видалити аеропорт, оскільки він використовується в рейсах.");
         }
     };
 

@@ -99,7 +99,7 @@ export default function UsersPage() {
       success("Користувача видалено");
       fetchUsers();
     } catch {
-      error("Помилка видалення");
+      error("Неможливо видалити користувача, оскільки він вже забронював рейс.");
     }
   };
 

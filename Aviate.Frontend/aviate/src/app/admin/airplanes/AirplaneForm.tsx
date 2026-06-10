@@ -90,14 +90,14 @@ export default function AirplaneForm({
 
         if (err?.errors)
           setErrors(err.errors);
-        error("Помилка збереження літака");
+        error("Помилка збереження літака. Перевірте заповнення полів.");
 
         return;
       }
 
       const data = await res.json().catch(() => null);
       onSuccess?.(data);
-      success("Успішно!");
+      // success("Успішно!");
     } catch {
       error("Щось пішло не так");
     } finally {

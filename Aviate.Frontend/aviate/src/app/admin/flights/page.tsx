@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import FlightForm from "@/components/FlightForm";
 import FlightList from "@/components/FlightList";

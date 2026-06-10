@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import DatePicker, { registerLocale } from "react-datepicker";
+//@ts-ignore
 import "react-datepicker/dist/react-datepicker.css";
 import { MdDateRange } from "react-icons/md";
 import { uk } from "date-fns/locale";
-import { apiFetch } from "@/lib/api"; // твой общий fetch
+import { apiFetch } from "@/lib/api";
 
 registerLocale("uk", uk);
 
@@ -52,7 +53,11 @@ export default function SearchCard() {
       setAirports([]);
     }
   };
-
+function toEndOfDay(date: Date) {
+    const d = new Date(date);
+    d.setHours(23, 59, 59, 999);
+    return d;
+}
   // При выборе даты делаем запрос на минимальную цену
   useEffect(() => {
     const fetchPrice = async () => {
@@ -139,17 +144,17 @@ export default function SearchCard() {
   return (
     <div className=" w-full py-4 z-20">
       <div className="flex mx-auto px-4 py-2 justify-center">
-        <div className="flex flex-col md:flex-row gap-2">
+        <div className="flex flex-col md:flex-row items-center gap-2">
 
           {/* Inputs */}
-          <div className="flex flex-col md:flex-row gap-1 md:gap-0.5 flex-1 rounded-xl shadow-[0_0_25px_rgba(0,0,0,0.3)]">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-0.5 rounded-xl shadow-[0_0_25px_rgba(0,0,0,0.3)]">
 
             {/* Звідки */}
-            <div className="relative flex-1" ref={fromRef}>
+            <div className="relative" ref={fromRef}>
               <input
                 type="text"
                 placeholder="Звідки"
-                className="bg-white rounded-l-xl px-4 py-4 w-full focus:outline-[#ED552B]"
+                className="bg-white  rounded-xl md:rounded-r-none px-4 py-4 w-full focus:outline-[#ED552B]"
                 value={fromInput}
                 onChange={(e) => {
                   setFromInput(e.target.value);
@@ -186,11 +191,11 @@ export default function SearchCard() {
             </div>
 
             {/* Куди */}
-            <div className="relative flex-1" ref={toRef}>
+            <div className="relative" ref={toRef}>
               <input
                 type="text"
                 placeholder="Куди"
-                className="bg-white px-4 py-4 w-full focus:outline-[#ED552B]"
+                className="bg-white px-4 py-4 w-full focus:outline-[#ED552B] rounded-xl md:rounded-none"
                 value={toInput}
                 onChange={(e) => {
                   setToInput(e.target.value);
@@ -229,14 +234,14 @@ export default function SearchCard() {
 
 
             {/* Дата в одну сторону */}
-            <div className="relative z-20">
+            <div className="relative z-20 min-w-0">
               <DatePicker
                 selected={startDate}
                 onChange={(date) => setStartDate(date)}
                 placeholderText="Коли"
                 locale="uk"
                 dateFormat="d MMMM"
-                className="bg-white px-4 py-4 focus:outline-[#ED552B]"
+                className="bg-white px-4 py-4 focus:outline-[#ED552B] min-w-0 w-full rounded-xl md:rounded-none"
                 renderDayContents={(day) => (
                   <div className="flex flex-col items-center">
                     <span>{day}</span>
@@ -250,14 +255,14 @@ export default function SearchCard() {
             </div>
 
             {/* Дата назад */}
-            <div className="relative z-20">
+            <div className="relative z-20 min-w-0">
               <DatePicker
                 selected={endDate}
-                onChange={(date) => setEndDate(date)}
+                onChange={(date) => setEndDate(date ? toEndOfDay(date) : null)}
                 placeholderText="Назад"
                 locale="uk"
                 dateFormat="d MMMM"
-                className="bg-white rounded-r-xl px-4 py-4 focus:outline-[#ED552B]"
+                className="bg-white  rounded-xl md:rounded-l-none px-4 py-4 focus:outline-[#ED552B] min-w-0 w-full"
                 renderDayContents={(day) => (
                   <div className="flex flex-col items-center">
                     <span>{day}</span>
@@ -276,7 +281,8 @@ export default function SearchCard() {
 
           {/* Кнопка */}
           <button
-            className="bg-[#FA742D] cursor-pointer shadow-[0_0_25px_rgba(0,0,0,.2)] z-20 rounded-xl px-10 py-3 text-white font-bold hover:bg-[#ED7332] active:bg-[#D3662D] transition-colors"
+            className={`bg-[#FA742D] cursor-pointer w-full md:w-auto shadow-[0_0_25px_rgba(0,0,0,.2)] 
+            z-20 rounded-xl md:shrink-0 px-5 py-3 sm:h-full text-white font-bold hover:bg-[#ED7332] active:bg-[#D3662D] transition-colors`}
             onClick={handleSearchFlights}
           >
             Знайти квитки

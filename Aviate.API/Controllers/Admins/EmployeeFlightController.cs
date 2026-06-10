@@ -35,7 +35,7 @@ namespace Aviate.API.Controllers.Admin
 
         /// <summary>Оновити рейс</summary>
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] FlightUpdateDto dto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] FlightUpdateDto dto)
         {
             await _flightService.UpdateAsync(id, dto);
             return NoContent();

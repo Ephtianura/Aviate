@@ -72,7 +72,7 @@ export default function AdminDashboard() {
         const fetchAll = async () => {
             try {
                 const [flightsRes, airplanesRes, bookingsRes, seatsRes] = await Promise.all([
-                    apiFetch("/flights?Page=1&PageSize=100"),
+                    apiFetch("/flights?Page=1&PageSize=100&"),
                     apiFetch("/admin/airplanes?Page=1&PageSize=100"),
                     apiFetch("/admin/bookings?Page=1&PageSize=100"),
                     apiFetch("/seats?Page=1&PageSize=100"),
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
                 </WhiteCard>
 
                 {/* 4 */}
-                <WhiteCard>
+                {/* <WhiteCard>
                     <h2 className="mb-4">Топ маршрутів</h2>
                     <BarChart width={400} height={300} {...NO_ANIMATION} data={routeData}>
                         <XAxis dataKey="route" hide />
@@ -265,7 +265,7 @@ export default function AdminDashboard() {
                         <Tooltip />
                         <Bar dataKey="count" fill="#60A5FA" />
                     </BarChart>
-                </WhiteCard>
+                </WhiteCard> */}
 
                 {/* 5 */}
                 <WhiteCard>
@@ -281,6 +281,8 @@ export default function AdminDashboard() {
                 </WhiteCard>
 
                 {/* 6 */}
+                <div>
+
                 <WhiteCard>
                     <h2 className="mb-4">Місткість літаків</h2>
                     <BarChart width={400} height={300} {...NO_ANIMATION} data={modelCapacityData}>
@@ -290,6 +292,7 @@ export default function AdminDashboard() {
                         <Bar dataKey="avg" fill="#FBBF24" />
                     </BarChart>
                 </WhiteCard>
+                </div>
 
                 {/* 7 */}
                 {/* <WhiteCard>

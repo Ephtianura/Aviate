@@ -14,10 +14,12 @@ namespace Aviate.Core.Filters
         public DateTimeOffset? DepartureTo { get; set; }
         public DateTimeOffset? ArrivalFrom { get; set; }
         public DateTimeOffset? ArrivalTo { get; set; }
+        public bool ExcludeExpired { get; set; }
         public string? SortBy { get; set; }              // "FlightNumber", "DepartureTime", "ArrivalTime", "BasePrice"
         public bool SortDesc { get; set; }
         public int Page { get; set; } = 1;
-        public int PageSize { get; set; } = 20;
+        public int PageSize { get; set; } = 20; 
+
     }
 }
 
