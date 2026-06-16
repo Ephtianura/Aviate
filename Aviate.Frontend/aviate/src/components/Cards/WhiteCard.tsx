@@ -9,7 +9,7 @@ export default function WhiteCard({
 }: WhiteCardProps) {
   return (
     <div
-      className="p-6 rounded-2xl shadow-md bg-white w-full">
+      className="p-6 rounded-2xl shadow-md bg-white ">
       {children}
     </div>
   );

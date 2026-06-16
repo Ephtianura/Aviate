@@ -238,7 +238,7 @@ function toEndOfDay(date: Date) {
               <DatePicker
                 selected={startDate}
                 onChange={(date) => setStartDate(date)}
-                placeholderText="Коли"
+                placeholderText="Від"
                 locale="uk"
                 dateFormat="d MMMM"
                 className="bg-white px-4 py-4 focus:outline-[#ED552B] min-w-0 w-full rounded-xl md:rounded-none"
@@ -259,18 +259,10 @@ function toEndOfDay(date: Date) {
               <DatePicker
                 selected={endDate}
                 onChange={(date) => setEndDate(date ? toEndOfDay(date) : null)}
-                placeholderText="Назад"
+                placeholderText="До"
                 locale="uk"
                 dateFormat="d MMMM"
                 className="bg-white  rounded-xl md:rounded-l-none px-4 py-4 focus:outline-[#ED552B] min-w-0 w-full"
-                renderDayContents={(day) => (
-                  <div className="flex flex-col items-center">
-                    <span>{day}</span>
-                    <span className="text-xs text-primary-green">
-                      {price ? `${price}₴` : ""}
-                    </span>
-                  </div>
-                )}
               />
               <div className="absolute right-4 top-[17px]">
                 <MdDateRange className="bg-white text-primary w-5 h-5" />
